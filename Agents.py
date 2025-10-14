@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 import random
 import json
-from crewai import Agent, Task, LLM, Crew, Process
-from crewai_tools import JSONSearchTool, RagTool, TXTSearchTool, DallETool
-from crewai.memory import LongTermMemory
+#from crewai import Agent, Task, LLM, Crew, Process
+#from crewai_tools import JSONSearchTool, RagTool, TXTSearchTool, DallETool
+#from crewai.memory import LongTermMemory
 import streamlit as st
 import datetime
 import re
@@ -37,6 +37,7 @@ import os
 
 openai_key = "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"
 #openai_key = "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"
+"""
 gpt = LLM(
     #model= "gpt-4-turbo",
     #model= "gpt-3.5-turbo",
@@ -69,7 +70,7 @@ gpt_4 = LLM(
 #    temperature=0.5,
 #    api_key = openai_key
 #)
-
+"""
 # Systeme d'Agent
 new_api = "AIzaSyD9ZstqQTUvpjTPN1wLUP_k4eW3tSdJq9o"
 api_k = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
@@ -79,6 +80,7 @@ apis_gem = ["AIzaSyCT-YT7kIIpUvxVhwYCqD3NkUjRQKPwolk", "AIzaSyC3TF0w1DL4wOGf50jN
 #gem = random.choice(model_LLM)
 #api = random.choice(apis_gem)
 
+"""
 def system(table_desc, caracteristique, history, info_sup,
            request = "Quelles sont les clients qui ont utilisé les services de l'application maxit pour faire un transfert d'argent ou acheter un illiflex pendant le mois de janvier.") :
     last_turns = history[-4:]
@@ -448,7 +450,7 @@ def system(table_desc, caracteristique, history, info_sup,
     #print(system_multi_agent.token_usage)
 
     return sql_query
-
+    """
 
 
 def extract_sql(path_txt: str) -> str:
@@ -2483,4 +2485,5 @@ def SQL_Agent(requete, user_dir):
         sql_query = None
 
     return sql_query
+
 
