@@ -20,7 +20,7 @@ from PIL import Image
 import math
 import time
 import uuid
-from Agents import system, Agent_analyse_recommand, Agent_SQL, Agent_SQL_Gem, SQL_Agent, Agent_KPI_req_gemini, \
+from Agents import Agent_analyse_recommand, Agent_SQL, Agent_SQL_Gem, SQL_Agent, Agent_KPI_req_gemini, \
                                 analyse_recommand_gemini, Agent_KPI_req
 from connection_DB import connect_db
 
