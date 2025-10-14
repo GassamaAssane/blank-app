@@ -1,0 +1,20 @@
+Pour répondre à la question "donne moi Top 10 des communes générant le plus de Chiffre d'affaires via WAVE en 2025", nous allons utiliser la table `reporting_ca_monthly`. Voici la requête SQL Hive qui vous permettra d'obtenir les résultats souhaités :
+
+```sql
+SELECT 
+    ca_cr_commune, 
+    SUM(ca_wave) AS total_ca_wave, 
+    year, 
+    month
+FROM 
+    reporting_ca_monthly
+WHERE 
+    year = 2025
+GROUP BY 
+    ca_cr_commune, year, month
+ORDER BY 
+    total_ca_wave DESC
+LIMIT 10;
+```
+
+Cette requête somme les chiffres d'affaires générés via WAVE (`ca_wave`) pour chaque commune (`ca_cr_commune`) en 2025. Elle trie ensuite les résultats par ordre décroissant de chiffre d'affaires total pour donner les 10 premières communes. Les colonnes `year` et `month` sont également incluses dans la sélection pour s'assurer que l'année et le mois correspondent à ceux de 2025, conformément aux instructions.

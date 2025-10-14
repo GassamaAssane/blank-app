@@ -1,0 +1,329 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca des offres bundles"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year, \n    rcdm.month AS month, \n    SUM(rcdm.ca_data) AS total_ca_bundles\nFROM \n    reporting_ca_data_monthly AS rcdm\nWHERE \n    rcdm.formule_dmgp LIKE '%JAMONO%' OR\n    rcdm.formule_dmgp LIKE '%KIRENE%'\nGROUP BY \n    rcdm.year, \n    rcdm.month\nORDER BY \n    rcdm.year DESC, \n    rcdm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2024,
+        "6": 2024,
+        "7": 2024,
+        "8": 2024,
+        "9": 2024,
+        "10": 2024,
+        "11": 2024,
+        "12": 2024,
+        "13": 2024,
+        "14": 2024,
+        "15": 2024,
+        "16": 2024,
+        "17": 2023,
+        "18": 2023,
+        "19": 2023,
+        "20": 2023,
+        "21": 2023,
+        "22": 2023,
+        "23": 2023,
+        "24": 2023,
+        "25": 2023,
+        "26": 2023,
+        "27": 2023,
+        "28": 2023
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1,
+        "5": 12,
+        "6": 11,
+        "7": 10,
+        "8": 9,
+        "9": 8,
+        "10": 7,
+        "11": 6,
+        "12": 5,
+        "13": 4,
+        "14": 3,
+        "15": 2,
+        "16": 1,
+        "17": 12,
+        "18": 11,
+        "19": 10,
+        "20": 9,
+        "21": 8,
+        "22": 7,
+        "23": 6,
+        "24": 5,
+        "25": 4,
+        "26": 3,
+        "27": 2,
+        "28": 1
+      },
+      "total_ca_bundles": {
+        "0": 351233344.15,
+        "1": 262341515.64,
+        "2": 288948449.07,
+        "3": 217882873.12,
+        "4": 351432783.8,
+        "5": 279565498.81,
+        "6": 303467067.74,
+        "7": 247301391.9,
+        "8": 274770155.48,
+        "9": 345937958.93,
+        "10": 298461734.44,
+        "11": 293455115.5,
+        "12": 267299695.31,
+        "13": 252123177.01,
+        "14": 285978535.88,
+        "15": 224512538.89,
+        "16": 297956555.63,
+        "17": 303213949.12,
+        "18": 271661385.99,
+        "19": 230285776.8,
+        "20": 257795254.51,
+        "21": 205696537.97,
+        "22": 359227385.19,
+        "23": 257963304.17,
+        "24": 299329547.57,
+        "25": 227870805.86,
+        "26": 139246115.35,
+        "27": 192351993.72,
+        "28": 259205405.63
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca des offres de type bundles"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    ds.year AS year,\n    ds.month AS month,\n    SUM(ds.ca_data) + SUM(ds.ca_voix) AS total_ca\nFROM \n    daily_souscription AS ds\nWHERE \n    ds.types LIKE '%BUNDLES%'\n    AND ds.year = 2023 -- Assuming the current year is 2023, adjust accordingly\nGROUP BY \n    ds.year, \n    ds.month\nORDER BY \n    ds.year DESC, \n    ds.month DESC;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "total_ca": {}
+    }
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    ds.year AS year,\n    ds.month AS month,\n    SUM(ds.ca_data) + SUM(ds.ca_voix) AS total_ca\nFROM \n    daily_souscription AS ds\nWHERE \n    ds.types LIKE '%BUNDLES%'\n    AND ds.year = 2025 -- Assuming the current year is 2023, adjust accordingly\nGROUP BY \n    ds.year, \n    ds.month\nORDER BY \n    ds.year DESC, \n    ds.month DESC;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "total_ca": {}
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca pass internationaux du mois de Mars"
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca pass généré à l'international au mois de Mars"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nJe n'ai pas reçu de table de données spécifique pour produire une requête SQL. Veuillez reformuler votre question en fournissant les tables nécessaires et les informations pertinentes pour que je puisse vous aider à créer une requête SQL valide.\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Chiffre d'affaire généré par les pass internationaux au Mars 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nJe suis désolé, mais je ne peux pas créer de requête SQL sans informations sur la ou les tables pertinentes contenant les données nécessaires pour répondre à votre question. Veuillez fournir plus de détails ou de contexte sur les tables de votre base de données.\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Chiffre d'affaire généré par les pass internationaux au Mars 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nJe n'ai pas reçu de tables de données ou d'informations supplémentaires pour répondre à la question posée. Merci de reformuler votre question et de fournir plus de détails sur les tables impliquées, afin que je puisse vous aider à produire une requête SQL valide pour répondre à votre besoin métier.\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Chiffre d'affaire généré par les pass internationaux au Mars 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    year AS year,\n    month AS month,\n    SUM(sous_mnt) AS total_revenue\nFROM\n    daily_souscription\nWHERE\n    year = 2025\n    AND month = 3\n    AND types = 'INTERNATIONAL'\nGROUP BY\n    year,\n    month\nORDER BY\n    year DESC,\n    month DESC;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "total_revenue": {}
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Chiffre d'affaire généré par les pass internationaux en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nIl semble que vous n'avez fourni aucune table de données. Pour générer une requête SQL valide et correcte, j'ai besoin de connaître les tables auxquelles vous avez accès, ainsi que les colonnes pertinentes de ces tables. Je vous recommande de reformuler la question en fournissant les informations sur les tables disponibles ou de donner plus de contexte sur les données que vous possédez.\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Chiffre d'affaire généré par les pass internationaux en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    year AS year,\n    month AS month,\n    SUM(ca_data + ca_voix) AS total_revenue\nFROM\n    daily_souscription\nWHERE\n    year = 2025\n    AND types = 'INTERNATIONAL'\nGROUP BY\n    year,\n    month\nORDER BY\n    year DESC,\n    month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025
+      },
+      "month": {
+        "0": 6,
+        "1": 5,
+        "2": 2,
+        "3": 1
+      },
+      "total_revenue": {
+        "0": 500.0,
+        "1": 1700.0,
+        "2": 3190.0,
+        "3": 2690.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca cartes"
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca par cartes bancaires"
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca cartes"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    r.year AS year, \n    r.month AS month,\n    SUM(r.ca_data) AS total_ca_data\nFROM \n    reporting_ca_data_monthly AS r\nJOIN \n    (SELECT MAX(year) AS max_year FROM reporting_ca_data_monthly) AS max_year_subquery \nON \n    r.year = max_year_subquery.max_year\nGROUP BY \n    r.year, r.month\nORDER BY \n    r.year DESC, r.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "total_ca_data": {
+        "0": 375198601.96,
+        "1": 299311361.71,
+        "2": 298584324.19,
+        "3": 241398420.91,
+        "4": 357582606.85
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca cartes et le ca wave"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    year AS year,\n    month AS month,\n    SUM(ca_cartes) AS total_ca_cartes,\n    SUM(ca_wave) AS total_ca_wave\nFROM \n    reporting_ca_monthly\nWHERE \n    year = YEAR(CURRENT_DATE())\nGROUP BY \n    year, month\nORDER BY \n    year DESC, month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "total_ca_cartes": {
+        "0": 4107000.0,
+        "1": 2904000.0,
+        "2": 4105000.0,
+        "3": 3469000.0,
+        "4": 6178000.0
+      },
+      "total_ca_wave": {
+        "0": 213510259.0,
+        "1": 219572645.0,
+        "2": 144793188.0,
+        "3": 139050176.0,
+        "4": 185736156.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca cartes"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    year AS year,\n    month AS month,\n    SUM(ca_cartes) AS ca_cartes_total\nFROM \n    reporting_ca_monthly\nWHERE \n    year = YEAR(CURRENT_DATE())\nGROUP BY \n    year, month\nORDER BY \n    year DESC, month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "ca_cartes_total": {
+        "0": 4107000.0,
+        "1": 2904000.0,
+        "2": 4105000.0,
+        "3": 3469000.0,
+        "4": 6178000.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  }
+]

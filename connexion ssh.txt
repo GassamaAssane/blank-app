@@ -1,0 +1,62 @@
+# Création 'un tunel avec Serveo sur un port libre automatiquement
+
+ssh -R 0:localhost:3306 serveo.net
+
+
+# un message de ce  type
+
+Forwarding TCP connections from serveo.net:51234
+
+
+# Connexon à la base
+import mysql.connector
+
+connection = mysql.connector.connect(
+    host="serveo.net",
+    port=51234,
+    user="root",
+    password="ton_mot_de_passe",
+    database="nom_de_ta_base"
+)
+
+
+
+
+# Tunnel avec Cloudflare
+winget install --id Cloudflare.cloudflared
+
+
+# Lance l'app Streamlit
+
+streamlit run ton_app.py
+
+# Puis dans un autre terminal
+
+cloudflared tunnel --url http://localhost:8501
+
+
+# génére automatiquement une URL sécurisée comme :
+
+https://random-name.trycloudflare.com
+
+# Créer un second tunnel pour MySQL Pour exposer la base de données MySQL locale (port 3306) :
+
+cloudflared tunnel --url tcp://localhost:3306
+
+
+# Cloudflare affichera quelque chose comme
+
+Connection available at tcp://random-mysql.trycloudflare.com:3306
+
+
+# Se connecter à la base depuis l'app Streamlit en ligne
+
+import mysql.connector
+
+connection = mysql.connector.connect(
+    host="random-mysql.trycloudflare.com",
+    port=3306,
+    user="streamlit",
+    password="MotDePasseFort123",
+    database="nom_de_ta_base"
+)

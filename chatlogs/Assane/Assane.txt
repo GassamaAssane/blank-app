@@ -1,0 +1,14 @@
+```sql
+SELECT
+    rcm.year AS year,
+    rcm.month AS month,
+    SUM(rcm.ca_recharges) AS ca_recharges
+FROM
+    reporting_ca_monthly AS rcm
+WHERE
+    rcm.year = 2025
+    AND rcm.month = 2
+GROUP BY
+    rcm.year,
+    rcm.month;
+```

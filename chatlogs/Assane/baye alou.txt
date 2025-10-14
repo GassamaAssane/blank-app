@@ -1,0 +1,29 @@
+Voici une requête SQL pour calculer l'évolution Year To Date (YTD) de la pénétration du parc actif 4G jusqu'au mois d'Avril en utilisant la table `daily_parc_data_4g` :
+
+```sql
+SELECT 
+    parc.year AS year,
+    parc.month AS month,
+    COUNT(DISTINCT parc.MSISDN) AS active_4g_users
+FROM 
+    daily_parc_data_4g AS parc
+WHERE 
+    parc.year = (SELECT MAX(year) FROM daily_parc_data_4g) -- Filtrer l'année en cours
+    AND parc.month <= 4 -- Jusqu'au mois d'Avril
+GROUP BY 
+    parc.year, parc.month
+ORDER BY 
+    parc.year DESC, parc.month DESC;
+```
+
+Cette requête effectue les opérations suivantes :
+
+1. **Filtrage par an et mois :** Elle filtre les données pour l'année la plus récente disponible et les mois jusqu'à Avril inclus.
+
+2. **Calcul des utilisateurs actifs 4G :** Elle utilise `COUNT(DISTINCT parc.MSISDN)` pour compter le nombre unique d'utilisateurs actifs 4G pour chaque mois, donnant ainsi la pénétration.
+
+3. **Groupement par année et mois :** Elle regroupe les résultats par année et mois pour obtenir une vue mensuelle de la pénétration du parc actif 4G.
+
+4. **Tri des résultats :** Elle trie les résultats du plus récent au plus ancien mois.
+
+Assurez-vous que cette requête s'exécute sans erreur dans votre environnement Hive en ajustant les conditions ou les placements des filtres si nécessaire.

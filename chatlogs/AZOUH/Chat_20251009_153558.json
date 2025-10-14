@@ -1,0 +1,49 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le volume d'appels vers Orange et Free"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    daily_voix.year AS year,\n    daily_voix.month AS month,\n    SUM(daily_voix.Orange) AS volume_appels_orange,\n    SUM(daily_voix.Free) AS volume_appels_free\nFROM\n    daily_voix\nWHERE daily_voix.year = YEAR(CURRENT_DATE())\nGROUP BY\n    daily_voix.year,\n    daily_voix.month;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025
+      },
+      "month": {
+        "0": 2,
+        "1": 3,
+        "2": 6,
+        "3": 5,
+        "4": 1,
+        "5": 4
+      },
+      "volume_appels_orange": {
+        "0": 221740.0,
+        "1": 198515.0,
+        "2": 117212.0,
+        "3": 287634.0,
+        "4": 258837.0,
+        "5": 214839.0
+      },
+      "volume_appels_free": {
+        "0": 35621.0,
+        "1": 32672.0,
+        "2": 21488.0,
+        "3": 44577.0,
+        "4": 50251.0,
+        "5": 27863.0
+      }
+    }
+  }
+]

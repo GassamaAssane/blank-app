@@ -1,0 +1,92 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "je veux le CA des recharges"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    rcm.year AS year,\n    rcm.month AS month,\n    SUM(rcm.ca_recharges) AS ca_recharges\nFROM\n    reporting_ca_monthly AS rcm\nWHERE rcm.year = YEAR(CURRENT_DATE())\nGROUP BY\n    rcm.year,\n    rcm.month\nORDER BY\n    rcm.year DESC,\n    rcm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "ca_recharges": {
+        "0": 820392885.0,
+        "1": 848388732.0,
+        "2": 659105356.0,
+        "3": 542618055.0,
+        "4": 700574572.0
+      }
+    }
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    rcm.year AS year,\n    rcm.month AS month,\n    SUM(rcm.ca_recharges) AS ca_recharges\nFROM\n    reporting_ca_monthly AS rcm\nWHERE rcm.year = YEAR(CURRENT_DATE())\nGROUP BY\n    rcm.year,\n    rcm.month\nORDER BY\n    rcm.year DESC,\n    rcm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "ca_recharges": {
+        "0": 820392885.0,
+        "1": 848388732.0,
+        "2": 659105356.0,
+        "3": 542618055.0,
+        "4": 700574572.0
+      }
+    }
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    rcm.year AS year,\n    rcm.month AS month,\n    SUM(rcm.ca_recharges) AS ca_recharges\nFROM\n    reporting_ca_monthly AS rcm\nWHERE rcm.year = YEAR(CURRENT_DATE())\nGROUP BY\n    rcm.year,\n    rcm.month\nORDER BY\n    rcm.year DESC,\n    rcm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "ca_recharges": {
+        "0": 820392885.0,
+        "1": 848388732.0,
+        "2": 659105356.0,
+        "3": 542618055.0,
+        "4": 700574572.0
+      }
+    }
+  }
+]

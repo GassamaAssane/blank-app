@@ -1,0 +1,206 @@
+[
+  {
+    "famille": "Revenu",
+    "primary_kpi_id": "Chiffres d'affaires(ca) recharges",
+    "recommended_kpi_id": "ca par marche",
+    "reason": "l'évolution (baisse ou augmentation) du ca recharges peut etre du à l'évolution (baisse ou augmentation) du ca recharge d'un des segments recharges. Pour le savoir il faut calculer le ca par segment de marche"
+  },
+  {
+    "famille": "Revenu",
+    "primary_kpi_id": "Ca recharges",
+    "recommended_kpi_id": "ca par region",
+    "reason": "l'évolution (baisse ou augmentation) du ca recharges peut etre du à l'évolution (baisse ou augmentation) du ca recharge d'une des régions. Pour le savoir il faut calculer le ca par région"
+  },
+  {
+    "famille": "Revenu",
+    "primary_kpi_id": "Ca recharges",
+    "recommended_kpi_id": "arpu",
+    "reason": "l'évolution (baisse ou augmentation) du ca recharges peut etre du à l'évolution (baisse ou augmentation) du recharge moyen par client. Pour le savoir il faut calculer l'évolution de l'arpu (  somme des recharges / parc rechargeur)"
+  },
+  {
+    "famille": "Revenu",
+    "primary_kpi_id": "Ca recharges",
+    "recommended_kpi_id": "ca par canal",
+    "reason": "l'évolution (baisse ou augmentation) du ca recharges peut etre dû à l'évolution (baisse ou augmentation) des recharges d'un des canaux . Pour le savoir, il faut calculer le CA par canal en utilisant les memes dimensions que le ca recharge"
+  },
+  {
+    "famille": "Revenu",
+    "primary_kpi_id": "Ca recharges",
+    "recommended_kpi_id": "ca voix",
+    "reason": "l'évolution (baisse ou augmentation) du ca recharges peut etre dû à l'évolution (baisse ou augmentation) du ca voix. Pour le savoir, il faut calculer le CA voix en utilisant les memes dimensions que le ca recharge"
+  },
+  {
+    "famille": "Revenu",
+    "primary_kpi_id": "Ca recharges",
+    "recommended_kpi_id": "ca data",
+    "reason": "l'évolution (baisse ou augmentation) du ca recharges peut etre dû à l'évolution (baisse ou augmentation) du ca data. Pour le savoir, il faut calculer le CA data en utilisant les memes dimensions que le ca recharge"
+  },
+  {
+    "famille": "Revenu",
+    "primary_kpi_id": "Ca recharges",
+    "recommended_kpi_id": "ca sva",
+    "reason": "l'évolution (baisse ou augmentation) du ca recharges peut etre dû à l'évolution (baisse ou augmentation) du ca sva. Pour le savoir, il faut calculer le CA sva en utilisant les memes dimensions que le ca recharge"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc Actif Orange",
+    "recommended_kpi_id": "Entrants",
+    "reason": "l'évolution (baisse ou augmentation) du parc actif orange peut etre dû à l'évolution (baisse ou augmentation) entrants du parc orange. Pour le savoir, il faut calculer les entrants en utilisant les memes dimensions que le parc actif Orange"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc Actif Orange",
+    "recommended_kpi_id": "Na",
+    "reason": "l'évolution (baisse ou augmentation) du parc actif orange peut etre dû à l'évolution (baisse ou augmentation) des NA du parc orange. Pour le savoir, il faut calculer les NA ( nouveaux abonnés) en utilisant les memes dimensions que le parc actif Orange"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc Actif Orange",
+    "recommended_kpi_id": "sortants",
+    "reason": "l'évolution (baisse ou augmentation) du parc actif orange peut etre dû à l'évolution (baisse ou augmentation) des sortants du parc orange. Pour le savoir, il faut calculer les sortants  en utilisant les memes dimensions que le parc actif Orange"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc Actif Orange",
+    "recommended_kpi_id": "acquisition",
+    "reason": "l'évolution (baisse ou augmentation) du parc actif orange peut etre dû à l'évolution (baisse ou augmentation) des acquisitions du parc orange. Pour le savoir, il faut calculer les acquisitions en utilisant les memes dimensions que le parc actif Orange"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc Actif Orange",
+    "recommended_kpi_id": "gratuite",
+    "reason": "l'évolution (baisse ou augmentation) du parc actif orange peut etre dû à l'évolution (baisse ou augmentation) des gratuite du parc orange. Pour le savoir, il faut calculer les gratuites  en utilisant les memes dimensions que le parc actif Orange"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc Actif Orange",
+    "recommended_kpi_id": "usage",
+    "reason": "l'évolution (baisse ou augmentation) du parc actif orange peut etre dû à l'évolution (baisse ou augmentation) des usages du parc orange. Pour le savoir, il faut calculer les usages en utilisant les memes dimensions que le parc actif Orange"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc Actif Orange",
+    "recommended_kpi_id": "reactive",
+    "reason": "l'évolution (baisse ou augmentation) du parc actif orange peut etre dû à l'évolution (baisse ou augmentation) des reactives du parc orange. Pour le savoir, il faut calculer les reactives en utilisant les memes dimensions que le parc actif orange"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc 4G",
+    "recommended_kpi_id": "Entrants Parc 4G",
+    "reason": "l'évolution (baisse ou augmentation) du parc 4G ou parc actif 4G peut etre dû à l'évolution (baisse ou augmentation) des entrants  du parc 4G .Pour le savoir, il faut calculer les entrants  en utilisant les memes dimensions que le parc 4G"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc 4G",
+    "recommended_kpi_id": "Sortants Parc 4G",
+    "reason": "l'évolution (baisse ou augmentation) du parc 4G ou parc actif 4G peut etre dû à l'évolution (baisse ou augmentation) des sortants  du parc 4G. Pour le savoir, il faut calculer les sortants  en utilisant les memes dimensions que le parc 4G"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc 5G",
+    "recommended_kpi_id": "Entrants Parc 5G",
+    "reason": "l'évolution (baisse ou augmentation) du parc 5G ou parc actif 5G peut etre dû à l'évolution (baisse ou augmentation) des entrants  du parc 5G .Pour le savoir, il faut calculer les entrants  en utilisant les memes dimensions que le parc 5G"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc 5G",
+    "recommended_kpi_id": "Sortants Parc 5G",
+    "reason": "l'évolution (baisse ou augmentation) du parc 5G ou parc actif 5G peut etre dû à l'évolution (baisse ou augmentation) des sortants  du parc 5G. Pour le savoir, il faut calculer les sortants  en utilisant les memes dimensions que le parc 5G"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": " Ca data ",
+    "recommended_kpi_id": "Montant PASS",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) du  montant des souscriptions PASS. Pour le savoir, il faut calculer les souscriptionns de PASS  en utilisant les memes dimensions que le ca datra"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": " Ca data ",
+    "recommended_kpi_id": "Montant Bundle",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) du  montant des souscriptions BUNDLE. Pour le savoir, il faut calculer les souscriptionns de BUNDLE  en utilisant les memes dimensions que le ca data"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": " Ca data ",
+    "recommended_kpi_id": "Montant Illiflex",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) du  montant des souscriptions ILLIFLEX. Pour le savoir, il faut calculer les souscriptionns d'ILLIFLEX  en utilisant les memes dimensions que le ca data"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": " Ca data ",
+    "recommended_kpi_id": "parc Pass",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) du  Parc des souscriptions PASS. Pour le savoir, il faut calculer le parc des souscriptionns PASS  en utilisant les memes dimensions que le ca data"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": " Ca data ",
+    "recommended_kpi_id": "Parc Bundle",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) du  Parc des souscriptions BUNDLE. Pour le savoir, il faut calculer le parc des souscriptionns BUNDLE  en utilisant les memes dimensions que le ca data"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": " Ca data ",
+    "recommended_kpi_id": "Parc Illiflex",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) du  Parc des souscriptions ILLIFLEX. Pour le savoir, il faut calculer le parc des souscriptionns ILLIFLEX  en utilisant les memes dimensions que le ca data"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": "CA Souscription",
+    "recommended_kpi_id": "parc Pass",
+    "reason": "l'évolution (baisse ou augmentation) du ca souscription peut etre dû à l'évolution (baisse ou augmentation) du  Parc des souscriptions PASS. Pour le savoir, il faut calculer le parc des souscriptionns PASS  en utilisant les memes dimensions que le ca souscription"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": "CA Souscription",
+    "recommended_kpi_id": "Parc Bundle",
+    "reason": "l'évolution (baisse ou augmentation) du ca souscription peut etre dû à l'évolution (baisse ou augmentation) du  Parc des souscriptions BUNDLE. Pour le savoir, il faut calculer le parc des souscriptionns BUNDLE  en utilisant les memes dimensions que le CA souscription"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": "CA Souscription",
+    "recommended_kpi_id": "Parc Illiflex",
+    "reason": "l'évolution (baisse ou augmentation) du ca souscription peut etre dû à l'évolution (baisse ou augmentation) du  Parc des souscriptions ILLILFLEX. Pour le savoir, il faut calculer le parc des souscriptionns ILLILFLEX  en utilisant les memes dimensions que le ca souscription"
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": "CA Souscription",
+    "recommended_kpi_id": "ca pass",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) du  CA Souscription. Pour le savoir, il faut calculer le montant des  souscriptionns de PASS  en utilisant les memes dimensions que le CA Souscription."
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": "CA Souscription",
+    "recommended_kpi_id": "ca bundle",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) CA Souscription.. Pour le savoir, il faut calculer le montant des souscriptions de BUNDLE  en utilisant les memes dimensions que le CA Souscription."
+  },
+  {
+    "famille": "revenu",
+    "primary_kpi_id": "CA Souscription",
+    "recommended_kpi_id": "ca illiflex",
+    "reason": "l'évolution (baisse ou augmentation) du ca data peut etre dû à l'évolution (baisse ou augmentation) CA Souscription.. Pour le savoir, il faut calculer le montant des souscriptionns d'ILLIFLEX  en utilisant les memes dimensions que le CA Souscription."
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc MAXIT",
+    "recommended_kpi_id": "Entrants ",
+    "reason": "l'évolution (baisse ou augmentation) du parc MAXIT peut etre dû à l'évolution (baisse ou augmentation) des entrants  du parc MAXIT .Pour le savoir, il faut calculer les entrants  en utilisant les memes dimensions que le parc MAXIT"
+  },
+  {
+    "famille": "Parc",
+    "primary_kpi_id": "Parc MAXIT",
+    "recommended_kpi_id": "Sortants",
+    "reason": "l'évolution (baisse ou augmentation) du parc MAXIT peut etre dû à l'évolution (baisse ou augmentation) des sortants  du parc MAXIT. Pour le savoir, il faut calculer les sortants  en utilisant les memes dimensions que le parc MAXIT"
+  },
+  {
+    "famille": "Trafic",
+    "primary_kpi_id": "Trafic Voix",
+    "recommended_kpi_id": "Ca voix",
+    "reason": "l'évolution (baisse ou augmentation) du trafic voix peut etre dû à l'évolution (baisse ou augmentation) du ca voix. Pour le savoir, il faut calculer les sortants  en utilisant les memes dimensions que le ca voix"
+  },
+  {
+    "famille": "Trafic",
+    "primary_kpi_id": "Trafic Data",
+    "recommended_kpi_id": "CA Data",
+    "reason": "l'évolution (baisse ou augmentation) du trafic data peut etre dû à l'évolution (baisse ou augmentation) du ca data. Pour le savoir, il faut calculer les sortants  en utilisant les memes dimensions que le ca data"
+  }
+]

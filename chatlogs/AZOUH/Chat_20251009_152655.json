@@ -1,0 +1,26 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "je veux le volume du trafic data sur le réseau 4G en avril 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    monthly_data.year AS year,\n    monthly_data.month AS month,\n    SUM(monthly_data.trafic_4g_mo) AS total_trafic_4g_mo\nFROM\n    monthly_data\nWHERE\n    monthly_data.year = 2025\n    AND monthly_data.month = 4\nGROUP BY\n    monthly_data.year,\n    monthly_data.month\nORDER BY\n    monthly_data.year DESC,\n    monthly_data.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025
+      },
+      "month": {
+        "0": 4
+      },
+      "total_trafic_4g_mo": {
+        "0": 2065154.3207806516
+      }
+    }
+  }
+]

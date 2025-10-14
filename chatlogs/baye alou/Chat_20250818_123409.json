@@ -1,0 +1,65 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue **baye alou** Dalal ak jam",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi Top 10 des communes générant le plus de Chiffre d'affaires via WAVE en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL envoyée :\n\nSELECT \n    ca_cr_commune, \n    SUM(ca_wave) AS total_ca_wave, \n    year, \n    month\nFROM \n    reporting_ca_monthly\nWHERE \n    year = 2025\nGROUP BY \n    ca_cr_commune, year, month\nORDER BY \n    total_ca_wave DESC\nLIMIT 10;\n\n",
+    "content_data": {
+      "ca_cr_commune": {
+        "0": "TOUBA MOSQUEE",
+        "1": "SAINT LOUIS",
+        "2": "DIAXAY PARCELLE NIAKOULRAP",
+        "3": "THIES NORD",
+        "4": "PLATEAU",
+        "5": "PARCELLES ASSAINIES",
+        "6": "MBAO",
+        "7": "GRAND YOFF",
+        "8": "PLATEAU",
+        "9": "RUFISQUE EST"
+      },
+      "total_ca_wave": {
+        "0": 45348522.0,
+        "1": 25661073.0,
+        "2": 21393295.0,
+        "3": 16315569.0,
+        "4": 15731450.0,
+        "5": 15625023.0,
+        "6": 14866667.0,
+        "7": 14331127.0,
+        "8": 13137459.0,
+        "9": 12661878.0
+      },
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025,
+        "6": 2025,
+        "7": 2025,
+        "8": 2025,
+        "9": 2025
+      },
+      "month": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": 4,
+        "4": 2,
+        "5": 5,
+        "6": 5,
+        "7": 4,
+        "8": 4,
+        "9": 1
+      }
+    }
+  }
+]

@@ -1,0 +1,22 @@
+```sql
+SELECT
+    md.year AS year,
+    md.month AS month,
+    SUM(ds.ca_data) AS ca_data,
+    SUM(ds.sous_mnt) AS montant_pass,
+    COUNT(DISTINCT ds.msisdn) AS parc_pass,
+    SUM(md.total_volume_mo) AS trafic_data
+FROM
+    monthly_data md
+LEFT JOIN
+    daily_souscription ds ON md.MSISDN = ds.msisdn AND md.year = ds.year AND md.month = ds.month
+WHERE
+    md.year = 2025
+    AND md.month IN (1, 2, 3, 4, 5)
+GROUP BY
+    md.year,
+    md.month
+ORDER BY
+    md.year,
+    md.month;
+```

@@ -1,0 +1,329 @@
+[
+  {
+    "role": "user",
+    "content_request": ""
+  },
+  {
+    "role": "user",
+    "content_request": "Quel est le chiffre d’affaires total généré par les offres data en 2024"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nNone\n\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Quel est le chiffre d’affaires total généré par les offres data en 2024"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT SUM(ca_data) AS total_ca_data_2024\nFROM reporting_ca_data_monthly\nWHERE year = 2024;\n\n\n",
+    "content_data": {
+      "total_ca_data_2024": {
+        "0": 3680941433.52
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle est le volume d’appels par commune pour les clients Mass-Market"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT \n    ca_cr_commune,\n    SUM(Orange + Expresso_Mobile + Free + DIV + ProMobile + international + Fixe_Expresso + Fixe_Sonatel + CSU_Mobile) AS total_appel\nFROM \n    reporting_monthly_voix\nWHERE \n    SEGMENT_MARCHE = 'Mass-Market'\nGROUP BY \n    ca_cr_commune\nORDER BY \n    total_appel DESC;\n\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle formule tarifaire génère le plus de trafic 4G sur le mois de juin"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT formule_xarre, SUM(trafic_4g_mo) AS total_trafic_4g\nFROM reporting_daily_data_xarre\nWHERE month = 6\nGROUP BY formule_xarre\nORDER BY total_trafic_4g DESC\nLIMIT 1;\n\n\n",
+    "content_data": {
+      "formule_xarre": {
+        "0": "JAMONO NEW S'COOL"
+      },
+      "total_trafic_4g": {
+        "0": 14701102498.16
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne-moi le nombre d’abonnés ayant souscrit à ILLIMIX JOUR 500F sur les 3 derniers mois"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Aucune requête SQL n'a été générée",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne-moi le nombre d’abonnés ayant souscrit à ILLIMIX JOUR 500F sur les 3 derniers mois"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT \n    SUM(nb_subs) AS total_subscribers\nFROM\n    reporting_offer_monthly\nWHERE\n    offer_name = 'ILLIMIX JOUR 500F'\n    AND year = (SELECT MAX(year) FROM reporting_offer_monthly) \n    AND month IN ((SELECT MAX(month) FROM reporting_offer_monthly), (SELECT MAX(month)-1 FROM reporting_offer_monthly), (SELECT MAX(month)-2 FROM reporting_offer_monthly));\n\n\n",
+    "content_data": {
+      "total_subscribers": {
+        "0": null
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne le parc des takers de l'illimix 1300 DATA sur le mois de juin"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT \n    COUNT(*) AS parc_takers\nFROM\n    reporting_offer_monthly\nWHERE\n    offer_name LIKE '%ILLIMIX 1300%'\n    AND month = 6;\n\n\n",
+    "content_data": {
+      "parc_takers": {
+        "0": 0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quel est le chiffre d’affaires total généré par les offres data en 2024 "
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT SUM(ca_data) AS total_ca_data_2024\nFROM reporting_ca_data_monthly\nWHERE year = 2024;\n\n\n",
+    "content_data": {
+      "total_ca_data_2024": {
+        "0": 3680941433.52
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Combien de bénéficiaires ont reçu le cadeau 10mns d'appel en janvier 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT \n    SUM(nb_subs) AS nombre_beneficiaires\nFROM\n    reporting_sargal_gift_monthly\nWHERE\n    sargal_gift_name LIKE '%10 mns appel%'\n    AND year = 2025\n    AND month = 1;\n\n\n",
+    "content_data": {
+      "nombre_beneficiaires": {
+        "0": null
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Déterminer les meilleures périodes de souscription"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT\n    year,\n    month,\n    SUM(sous_cnt) AS total_souscriptions\nFROM\n    reporting_souscription_monthly\nGROUP BY\n    year,\n    month\nORDER BY\n    year DESC,\n    month DESC;\n\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2024,
+        "6": 2024,
+        "7": 2024,
+        "8": 2024,
+        "9": 2024,
+        "10": 2024,
+        "11": 2024,
+        "12": 2024,
+        "13": 2024,
+        "14": 2024,
+        "15": 2024,
+        "16": 2024,
+        "17": 2023,
+        "18": 2023,
+        "19": 2023,
+        "20": 2023,
+        "21": 2023,
+        "22": 2023,
+        "23": 2023,
+        "24": 2023,
+        "25": 2023,
+        "26": 2023,
+        "27": 2023,
+        "28": 2023
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1,
+        "5": 12,
+        "6": 11,
+        "7": 10,
+        "8": 9,
+        "9": 8,
+        "10": 7,
+        "11": 6,
+        "12": 5,
+        "13": 4,
+        "14": 3,
+        "15": 2,
+        "16": 1,
+        "17": 12,
+        "18": 11,
+        "19": 10,
+        "20": 9,
+        "21": 8,
+        "22": 7,
+        "23": 6,
+        "24": 5,
+        "25": 4,
+        "26": 3,
+        "27": 2,
+        "28": 1
+      },
+      "total_souscriptions": {
+        "0": 241386.0,
+        "1": 163715.0,
+        "2": 187043.0,
+        "3": 238870.0,
+        "4": 191769.0,
+        "5": 155449.0,
+        "6": 139098.0,
+        "7": 253028.0,
+        "8": 268166.0,
+        "9": 157423.0,
+        "10": 261321.0,
+        "11": 223046.0,
+        "12": 263243.0,
+        "13": 299598.0,
+        "14": 255230.0,
+        "15": 361303.0,
+        "16": 234273.0,
+        "17": 252959.0,
+        "18": 215413.0,
+        "19": 217138.0,
+        "20": 163132.0,
+        "21": 199231.0,
+        "22": 178392.0,
+        "23": 178818.0,
+        "24": 233381.0,
+        "25": 244955.0,
+        "26": 131734.5,
+        "27": 210494.0,
+        "28": 145849.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Déterminer la meilleure période de souscription début mois mi mois ou fin du mois"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT\n    year,\n    month,\n    SUM(sous_cnt) AS total_souscriptions\nFROM\n    reporting_souscription_monthly\nGROUP BY\n    year,\n    month\nORDER BY\n    total_souscriptions DESC;\n\n\n",
+    "content_data": {
+      "year": {
+        "0": 2024,
+        "1": 2024,
+        "2": 2024,
+        "3": 2024,
+        "4": 2024,
+        "5": 2024,
+        "6": 2024,
+        "7": 2023,
+        "8": 2023,
+        "9": 2025,
+        "10": 2025,
+        "11": 2024,
+        "12": 2023,
+        "13": 2024,
+        "14": 2023,
+        "15": 2023,
+        "16": 2023,
+        "17": 2023,
+        "18": 2025,
+        "19": 2025,
+        "20": 2023,
+        "21": 2023,
+        "22": 2025,
+        "23": 2023,
+        "24": 2024,
+        "25": 2024,
+        "26": 2023,
+        "27": 2024,
+        "28": 2023
+      },
+      "month": {
+        "0": 2,
+        "1": 4,
+        "2": 9,
+        "3": 5,
+        "4": 7,
+        "5": 3,
+        "6": 10,
+        "7": 12,
+        "8": 4,
+        "9": 5,
+        "10": 2,
+        "11": 1,
+        "12": 5,
+        "13": 6,
+        "14": 10,
+        "15": 11,
+        "16": 2,
+        "17": 8,
+        "18": 1,
+        "19": 3,
+        "20": 6,
+        "21": 7,
+        "22": 4,
+        "23": 9,
+        "24": 8,
+        "25": 12,
+        "26": 1,
+        "27": 11,
+        "28": 3
+      },
+      "total_souscriptions": {
+        "0": 361303.0,
+        "1": 299598.0,
+        "2": 268166.0,
+        "3": 263243.0,
+        "4": 261321.0,
+        "5": 255230.0,
+        "6": 253028.0,
+        "7": 252959.0,
+        "8": 244955.0,
+        "9": 241386.0,
+        "10": 238870.0,
+        "11": 234273.0,
+        "12": 233381.0,
+        "13": 223046.0,
+        "14": 217138.0,
+        "15": 215413.0,
+        "16": 210494.0,
+        "17": 199231.0,
+        "18": 191769.0,
+        "19": 187043.0,
+        "20": 178818.0,
+        "21": 178392.0,
+        "22": 163715.0,
+        "23": 163132.0,
+        "24": 157423.0,
+        "25": 155449.0,
+        "26": 145849.0,
+        "27": 139098.0,
+        "28": 131734.5
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Déterminer la meilleure période de souscription début mois, mi mois ou fin du mois"
+  },
+  {
+    "role": "assistant",
+    "content_request": "Requête SQL générée :\n\nSELECT\n    ds.year AS year,\n    ds.month AS month,\n    CASE\n        WHEN CAST(SUBSTRING(ds.day, 7, 2) AS INT) BETWEEN 1 AND 10 THEN 'Début mois'\n        WHEN CAST(SUBSTRING(ds.day, 7, 2) AS INT) BETWEEN 11 AND 20 THEN 'Mi mois'\n        WHEN CAST(SUBSTRING(ds.day, 7, 2) AS INT) BETWEEN 21 AND 31 THEN 'Fin du mois'\n        ELSE 'Période Inconnue'\n    END AS period_of_month,\n    SUM(ds.sous_cnt) AS total_souscriptions\nFROM\n    daily_souscription AS ds\nWHERE\n    ds.year = (SELECT MAX(year) FROM daily_souscription) -- Filtre sur l'année la plus récente disponible\nGROUP BY\n    ds.year,\n    ds.month,\n    period_of_month\nORDER BY\n    total_souscriptions DESC,\n    ds.year DESC,\n    ds.month DESC;\n\n",
+    "content_data": {}
+  }
+]

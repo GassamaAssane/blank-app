@@ -1,0 +1,20 @@
+```sql
+SELECT
+    rom.year AS year,
+    rom.month AS month,
+    SUM(rom.ca_data) AS ca_data,
+    SUM(CASE WHEN rom.types = 'PASS INTERNET' THEN rom.sous_mnt ELSE 0 END) AS montant_pass,
+    COUNT(DISTINCT CASE WHEN rom.types = 'PASS INTERNET' THEN rom.nb_subs ELSE NULL END) AS parc_pass,
+    COUNT(DISTINCT CASE WHEN rom.types = 'BUNDLES' THEN rom.nb_subs ELSE NULL END) AS parc_bundle
+FROM
+    reporting_offer_monthly rom
+WHERE
+    rom.month BETWEEN 1 AND 6
+    AND rom.year = YEAR(CURRENT_DATE())
+GROUP BY
+    rom.year,
+    rom.month
+ORDER BY
+    rom.year DESC,
+    rom.month DESC;
+```

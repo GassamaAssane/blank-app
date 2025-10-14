@@ -1,0 +1,26 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue azouh ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le CA wave de janvier"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    daily_recharges.year AS year,\n    daily_recharges.month AS month,\n    SUM(daily_recharges.ca_wave) AS ca_wave\nFROM\n    daily_recharges\nWHERE\n    daily_recharges.month = 1\n    AND daily_recharges.year = YEAR(CURRENT_DATE())\nGROUP BY\n    daily_recharges.year,\n    daily_recharges.month;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025
+      },
+      "month": {
+        "0": 1
+      },
+      "ca_wave": {
+        "0": 119332.0
+      }
+    }
+  }
+]

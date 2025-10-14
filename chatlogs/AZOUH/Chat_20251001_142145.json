@@ -1,0 +1,437 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUh ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi les types et marques d’appareils les plus utilisés par zone"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    o.year AS year,\n    o.month AS month,\n    o.zone_drv AS zone,\n    o.marque AS marque,\n    o.type_appareil AS type_appareil,\n    COUNT(o.msisdn) AS nombre_utilisateurs\nFROM \n    daily_infos_otarie AS o\nJOIN \n    daily_infos_bts AS b\nON \n    o.zone_drv = b.REGION\nWHERE \n    o.year = YEAR(CURRENT_DATE())\nGROUP BY \n    o.year, o.month, o.zone_drv, o.marque, o.type_appareil\nORDER BY \n    year DESC, month DESC, nombre_utilisateurs DESC;\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi les types et model d’appareils les plus utilisés par les clients par département"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nWITH RankedDevices AS (\n    SELECT\n        DEPARTEMENT,\n        type_appareil,\n        marque_appareil,\n        COUNT(MSISDN) AS device_count,\n        year,\n        month,\n        ROW_NUMBER() OVER (PARTITION BY DEPARTEMENT ORDER BY COUNT(MSISDN) DESC) AS rn\n    FROM\n        monthly_terminaux\n    WHERE year = YEAR(CURRENT_DATE())\n    GROUP BY\n        DEPARTEMENT,\n        type_appareil,\n        marque_appareil,\n        year,\n        month\n)\nSELECT\n    year as year,\n    month as month,\n    DEPARTEMENT,\n    type_appareil,\n    marque_appareil,\n    device_count\nFROM\n    RankedDevices\nWHERE\n    rn = 1\nORDER BY\n    DEPARTEMENT,\n    device_count DESC;\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi les modèles d’appareils les plus utilisés par département"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    mt.year AS year,\n    mt.month AS month,\n    mt.DEPARTEMENT AS department,\n    mt.model AS model,\n    mt.model_count AS model_count\nFROM (\n    SELECT\n        year,\n        month,\n        DEPARTEMENT,\n        model,\n        COUNT(*) AS model_count,\n        ROW_NUMBER() OVER (PARTITION BY year, month, DEPARTEMENT ORDER BY COUNT(*) DESC) AS rn\n    FROM\n        monthly_terminaux\n    WHERE year = YEAR(CURRENT_DATE())\n    GROUP BY\n        year,\n        month,\n        DEPARTEMENT,\n        model\n) mt\nWHERE mt.rn = 1\nORDER BY\n    mt.year DESC,\n    mt.month DESC,\n    mt.DEPARTEMENT;\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi les models d’appareils les plus utilisés par les clients par département"
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Top 10 des communes ayant généré le plus de CA WAVE en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcm.year AS year,\n    rcm.month AS month,\n    rcm.ca_cr_commune AS commune,\n    SUM(rcm.ca_wave) AS total_ca_wave\nFROM \n    reporting_ca_monthly AS rcm\nWHERE \n    rcm.year = 2025\nGROUP BY \n    rcm.year, rcm.month, rcm.ca_cr_commune\nORDER BY \n    total_ca_wave DESC\nLIMIT 10;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025,
+        "6": 2025,
+        "7": 2025,
+        "8": 2025,
+        "9": 2025
+      },
+      "month": {
+        "0": 4,
+        "1": 5,
+        "2": 3,
+        "3": 4,
+        "4": 2,
+        "5": 5,
+        "6": 5,
+        "7": 4,
+        "8": 4,
+        "9": 1
+      },
+      "commune": {
+        "0": "TOUBA MOSQUEE",
+        "1": "SAINT LOUIS",
+        "2": "DIAXAY PARCELLE NIAKOULRAP",
+        "3": "THIES NORD",
+        "4": "PLATEAU",
+        "5": "PARCELLES ASSAINIES",
+        "6": "MBAO",
+        "7": "GRAND YOFF",
+        "8": "PLATEAU",
+        "9": "RUFISQUE EST"
+      },
+      "total_ca_wave": {
+        "0": 45348522.0,
+        "1": 25661073.0,
+        "2": 21393295.0,
+        "3": 16315569.0,
+        "4": 15731450.0,
+        "5": 15625023.0,
+        "6": 14866667.0,
+        "7": 14331127.0,
+        "8": 13137459.0,
+        "9": 12661878.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quel est le volume total d’appels sortants vers Expresso en 2024 "
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    year AS year,\n    month AS month,\n    SUM(expresso_mobile) AS total_expresso_mobile_minutes\nFROM \n    reporting_monthly_voix\nWHERE \n    year = 2024\nGROUP BY\n    year, month\nORDER BY\n    year DESC, month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2024,
+        "1": 2024,
+        "2": 2024,
+        "3": 2024,
+        "4": 2024,
+        "5": 2024,
+        "6": 2024,
+        "7": 2024,
+        "8": 2024,
+        "9": 2024,
+        "10": 2024,
+        "11": 2024
+      },
+      "month": {
+        "0": 12,
+        "1": 11,
+        "2": 10,
+        "3": 9,
+        "4": 8,
+        "5": 7,
+        "6": 6,
+        "7": 5,
+        "8": 4,
+        "9": 3,
+        "10": 2,
+        "11": 1
+      },
+      "total_expresso_mobile_minutes": {
+        "0": 71269206.0,
+        "1": 95526369.0,
+        "2": 83477281.0,
+        "3": 95126303.0,
+        "4": 85405764.0,
+        "5": 65745786.0,
+        "6": 124247476.0,
+        "7": 96835144.0,
+        "8": 77546333.0,
+        "9": 72309209.0,
+        "10": 52255816.0,
+        "11": 75542450.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quel est le chiffre d’affaires data total pour les clients JEUNES en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year, \n    rcdm.month AS month, \n    SUM(rcdm.ca_data) AS total_ca_data \nFROM \n    reporting_ca_data_monthly AS rcdm \nWHERE \n    rcdm.segment_marche LIKE '%JEUNES%' \n    AND rcdm.year = 2025 \nGROUP BY \n    rcdm.year, \n    rcdm.month \nORDER BY \n    rcdm.year DESC, \n    rcdm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "total_ca_data": {
+        "0": 194491330.56,
+        "1": 98454247.05,
+        "2": 134843611.21,
+        "3": 99882073.24,
+        "4": 164795979.87
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle formule tarifaire a génèré le plus de trafic 4G sur le mois de Janvier"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    m.year as year,\n    m.month as month,\n    m.formule_dmgp,\n    SUM(m.trafic_4g_mo) as total_volume_4g\nFROM\n    monthly_data as m\nWHERE\n    m.year = YEAR(CURRENT_DATE()) AND\n    m.month = 1\nGROUP BY\n    m.year,\n    m.month,\n    m.formule_dmgp\nORDER BY\n    total_volume_4g DESC\nLIMIT 1;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025
+      },
+      "month": {
+        "0": 1
+      },
+      "formule_dmgp": {
+        "0": "KIRENE AVEC ORANGE"
+      },
+      "total_volume_4g": {
+        "0": 587768.8702276153
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "quelle formule tarifaire a généré le plus de trafic 4G en Janvier "
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year,\n    rcdm.month AS month,\n    rcdm.formule_dmgp,\n    SUM(rcdm.volumes) AS total_volume\nFROM \n    reporting_ca_data_monthly AS rcdm\nWHERE \n    rcdm.month = 1\n    AND rcdm.year = YEAR(CURRENT_DATE())\nGROUP BY \n    rcdm.year, rcdm.month, rcdm.formule_dmgp\nORDER BY \n    total_volume DESC\nLIMIT 1;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025
+      },
+      "month": {
+        "0": 1
+      },
+      "formule_dmgp": {
+        "0": "KIRENE AVEC ORANGE"
+      },
+      "total_volume": {
+        "0": 213.39
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quel est le montant total des paiements SENELEC sur l'application OM ou Maxit"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    MAXIT.year AS year,\n    MAXIT.month AS month,\n    SUM(MAXIT.mnt) AS total_montant_paiements_senelec\nFROM \n    reporting_daily_maxit AS MAXIT\nWHERE \n    MAXIT.fonctionnalite LIKE '%Paiement fact%' AND\n    MAXIT.categorie LIKE '%OM%' AND\n    MAXIT.year = YEAR(CURRENT_DATE())\nGROUP BY \n    MAXIT.year, MAXIT.month\nORDER BY \n    MAXIT.year DESC, MAXIT.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "total_montant_paiements_senelec": {
+        "0": 4716100.0,
+        "1": 3849500.0,
+        "2": 6647000.0,
+        "3": 6810147.0,
+        "4": 11822717.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quel est le cadeau le plus distribué en mai 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    sgm.year AS year,\n    sgm.month AS month,\n    sgm.sargal_gift_name,\n    SUM(sgm.nb_transactions) AS total_transactions\nFROM \n    reporting_sargal_gift_monthly AS sgm\nWHERE \n    sgm.year = 2025\n    AND sgm.month = 5\nGROUP BY \n    sgm.year, sgm.month, sgm.sargal_gift_name\nORDER BY \n    total_transactions DESC\nLIMIT 1;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025
+      },
+      "month": {
+        "0": 5
+      },
+      "sargal_gift_name": {
+        "0": "10mns d appel valable 1jour"
+      },
+      "total_transactions": {
+        "0": 2494.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "je veux le CA hors taxe"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rc.year as year, \n    rc.month as month, \n    SUM(rc.ca_ht) as ca_ht \nFROM \n    reporting_ca_monthly as rc \nWHERE \n    rc.year = YEAR(CURRENT_DATE()) \nGROUP BY \n    rc.year, rc.month \nORDER BY \n    rc.year DESC, rc.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "ca_ht": {
+        "0": 662141150.1,
+        "1": 684736668.23,
+        "2": 531965581.93,
+        "3": 437948389.81,
+        "4": 565435489.93
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle est l'évolution du trafic data"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year,\n    rcdm.month AS month,\n    SUM(rcdm.volumes) AS total_volume_data,\n    SUM(rcdm.ca_data) AS total_revenue_data\nFROM \n    reporting_ca_data_monthly AS rcdm\nWHERE\n    rcdm.year = YEAR(CURRENT_DATE())\nGROUP BY \n    rcdm.year, \n    rcdm.month\nORDER BY \n    rcdm.year DESC, \n    rcdm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "total_volume_data": {
+        "0": 738.4,
+        "1": 559.1,
+        "2": 539.72,
+        "3": 459.02,
+        "4": 628.73
+      },
+      "total_revenue_data": {
+        "0": 375198601.96,
+        "1": 299311361.71,
+        "2": 298584324.19,
+        "3": 241398420.91,
+        "4": 357582606.85
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca des achats data sur l'application maxit"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rdm.year AS year,\n    rdm.month AS month,\n    SUM(rdm.mnt) AS ca_total_achats_data\nFROM \n    reporting_daily_maxit AS rdm\nWHERE \n    rdm.fonctionnalite LIKE '%Achat%'\n    AND rdm.categorie LIKE '%Telco%'\n    AND rdm.year = YEAR(CURRENT_DATE())\nGROUP BY \n    rdm.year, \n    rdm.month\nORDER BY \n    rdm.year DESC, \n    rdm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025
+      },
+      "month": {
+        "0": 6,
+        "1": 5,
+        "2": 4,
+        "3": 3,
+        "4": 2,
+        "5": 1
+      },
+      "ca_total_achats_data": {
+        "0": 8208167.0,
+        "1": 129626321.0,
+        "2": 35346223.0,
+        "3": 82448442.0,
+        "4": 46644200.0,
+        "5": 65953616.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Quels sont les flux voix sortants de Dakar par opérateur"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rmv.year AS year,\n    rmv.month AS month,\n    SUM(rmv.csu_mobile) AS csu_mobile,\n    SUM(rmv.div) AS div_mobile,\n    SUM(rmv.expresso_mobile) AS expresso_mobile,\n    SUM(rmv.orange) AS orange_mobile,\n    SUM(rmv.free) AS free_mobile,\n    SUM(rmv.promobile) AS promobile_mobile\nFROM \n    reporting_monthly_voix AS rmv\nWHERE \n    rmv.ca_cr_commune LIKE '%DAKAR%'\n    AND rmv.year = YEAR(CURRENT_DATE())\nGROUP BY \n    rmv.year, rmv.month\nORDER BY \n    rmv.year DESC, rmv.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025
+      },
+      "month": {
+        "0": 4,
+        "1": 3,
+        "2": 2,
+        "3": 1
+      },
+      "csu_mobile": {
+        "0": 0.0,
+        "1": 492.0,
+        "2": 0.0,
+        "3": 17.0
+      },
+      "div_mobile": {
+        "0": 0.0,
+        "1": 20.0,
+        "2": 0.0,
+        "3": 0.0
+      },
+      "expresso_mobile": {
+        "0": 20947.0,
+        "1": 4917137.0,
+        "2": 76972.0,
+        "3": 2255919.0
+      },
+      "orange_mobile": {
+        "0": 818050.0,
+        "1": 119441115.0,
+        "2": 4502523.0,
+        "3": 57188105.0
+      },
+      "free_mobile": {
+        "0": 49421.0,
+        "1": 22818520.0,
+        "2": 296323.0,
+        "3": 9634064.0
+      },
+      "promobile_mobile": {
+        "0": 5751.0,
+        "1": 2519373.0,
+        "2": 16090.0,
+        "3": 825713.0
+      }
+    }
+  }
+]

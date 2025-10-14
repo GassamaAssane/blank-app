@@ -1,0 +1,15 @@
+```sql
+SELECT
+    reporting_monthly_international.year AS year,
+    reporting_monthly_international.month AS month,
+    SUM(reporting_monthly_international.ca_pass) AS ca_pass_international
+FROM
+    reporting_monthly_international
+WHERE reporting_monthly_international.year = YEAR(CURRENT_DATE())
+GROUP BY
+    reporting_monthly_international.year,
+    reporting_monthly_international.month
+ORDER BY
+    reporting_monthly_international.year DESC,
+    reporting_monthly_international.month DESC;
+```

@@ -1,0 +1,18 @@
+```sql
+SELECT
+    rse.year AS year,
+    rse.month AS month,
+    SUM(rse.nb_subs) AS nombre_abonnés_echangers,
+    SUM(rse.total_point_echanges) AS total_points_echanges
+FROM
+    reporting_sargal_echangeurs_mon rse
+WHERE
+    rse.month = 3
+    AND rse.year <= 2025 -- Assuming current year is 2025, filter on current year if not specified
+GROUP BY
+    rse.year,
+    rse.month
+ORDER BY
+    rse.year,
+    rse.month;
+```

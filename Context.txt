@@ -1,0 +1,87 @@
+"NB : Notez que la table daily_oss_5g contiennent les informations sur les cellules et leurs trafics (nom cellule, trafic moyen des utilisateurs, etc). daily_clients et " \
+"monthly_clients contiennent tout les informations quotidiennes et mensuelles des clients (identifiant, infos géographiques et démographiques, segment d'appartenance,etc.). daily_clients_digitaux donne les infos des clients qui utilisent les " \
+"plateformes digitaux de la SONATEL.daily_conso fournit le montant des consommations des appels (ou voix) internationaux de chaque client " \
+"(ca_voix_international).monthly_international et reporting_monthly_international donnent le montant des consommations des communications internationaux pour les forfaits, pour les usages hors forfait et " \
+"leur durée totale. daily_data donne le volume de trafic de la consommation des données mobiles sur le réseau 2G, 3G, 4G et 5G en " \
+"MégaOctets(Mo) tandisque monthly_data ajoute la commune et les segments (marché et recharges) d'appartenance et la formule tarifaire " \
+"souscrite par le client.daily_delta_parc et reporting_parc_monthly donnent les infos sur la sortie et le parc des clients (sortant(0/1), reactive(0/1),parc(0/1),nouvelles " \
+"arrivées(0/1), etc) alors que monthly_sortant ajoute la localité de référence du client (région, département, commune, zone_drv, " \
+"nom_cellule, etc) tandisque daily_parc fournit les infos globlal du parc des clients (nombre d'entrant, de sortant et de régularité, le parc (0/1), etc)." \
+"daily_habit_5g_user donne la consommation Data mobile des Clients (volume_go) sur le réseau 5G par type d'application.daily_heavy_user_4g " \
+"donne le suivi de la consommation 4G des Heavy user. daily_infos_bts donne les informations détaillées sur les sites physiques et leurs " \
+"cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent " \
+"le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les " \
+"volumes de données consommées pour chaque réseau en MégaOctets (Mo). daily_localisation_5g fournit les " \
+"infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
+"MAXIT tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services de l'application mobile Maxit." \
+"daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, " \
+"daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation " \
+"(last_active_date) ainsi que la fréquence (nb_j_distinct) pour les recharges, les pass, d'utilisation maxit, d'achat illimix et illiflex et data " \
+" du trafic le réseau 4G, data trafiqué le réseau global et partciper au programme Sargal. daily_recharges, monthly_recharges et reporting_ca_monthly donne les " \
+"chiffres d'affaires générés pour tout les recharges (ca recharges) sur les différents canaux ainsi que par canal (par OM (ca_pass_glob_om_jour, ca_credit_om), par Wave (ca_wave), par Seddo(ca_seddo), par cartes (ca_cartes), à l'international (ca_iah), " \
+"et par self_top_up).monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
+"reporting_sargal_gift_monthly et reporting_sargal_inscrits donne les infos sur la participation du programma de fidélité Sargal. " \
+"monthly_souscription et daily_souscription fournissent des informations sur la souscription (ca_data et ca_voix) des catégories (Pass Internet, illimix, illiflex, bundles, Mixel, etc) et " \
+"types d'offres souscrite (ILLIMIX JOUR 500F, PASS 2.5GO,MIXEL 690F, illiflex mois, etc). reporting_ca_data_monthly fait le reporting du Chiffre d'affaire data (ca_data) ou internet mensuelle. reporting_daily_offer, " \
+"reporting_offer_monthly et reporting_souscription_monthly font le le reporting sur les souscriptions (sous_mnt,ca_data, ca_voix, ca_sous_HT) aux offres suivant le " \
+"types de souscription et le type d'offre souscrit. reporting_monthly_terminaux fait le reporting des Data_user ou No Data_user avec la colonne data_status " \
+"et leur utilisation de smartphone ou pas. daily_sva, monthly_sva et reporting_monthly_sva donne le montant de la souscription et le parc des " \
+"services à valeur ajouté.daily_voix, monthly_voix et reporting_monthly_voix fournissent le volume ou la durée des appels sortants des abonnées " \
+"sur les différents opérateurs téléphoniques (Orange, Free, Expresso, ProMobile, etc) ainsi leurs parcs clients correspondant. reporting_5g_daily regroupe les sites techniques " \
+"avec une série de KPI quotidiens (Key Performance Indicators) liés à l’usage du réseau 5G. reporting_daily_parc fait le reporting quotidienne " \
+"du comportement (actifs ou inactifs) ou parc des abonnées sur les 90 derniers jours. reporting_daily_ca_pag_xarre, " \
+"reporting_daily_data_xarre, reporting_daily_trafic_xarre, reporting_recharge_daily_xarre et reporting_xarre_offer_nrt " \
+"donnent le chiffres d'affaires généré des voix et SMS en mode PAYG (Pay-As-You-Go) pour les formules ou offres commerciales XARRE, " \
+"le trafic Internet et le parc d’abonnés par technologie réseau (2G, 3G, 4G, 5G) ventilées par formule commerciale XARRE, le volume " \
+"de trafic sortant et les parcs d’utilisateurs par type de réseau et d’opérateur (Orange, Expresso, Free, ProMobile, etc) sur les " \
+"offres XARRE, le chiffre d'affaires généré par les recharges des offres XARRE ainsi que du parc actif pour chaque formule tarifaire " \
+"XARRE et les souscriptions aux offres XARRE.Les tables commençant par 'daily' et 'monthly' contiennent chacune une colonne 'MSISDN' " \
+"qui représente l'identifiant des clients ou abonnés. Sachez que les tables commençant par 'reporting' n'ont pas une colonne " \
+"pour l'identifiant des clients. Pour les questions sur Maxit, consultez les tables Maxit, pour les questions sur Sargal " \
+"allez sur les tables Sargal, etc. Si vous avez une question sur le chiffre d'affaire sans que l'utilisateur précise le chiffre " \
+"d'affaire de quoi (par exemple ca data, ca illimix, ca wave, ca voix, etc), sachez que l'utilisateur veut simplement le chiffre d'affaire " \
+"total qui n'est rien d'autre que le chiffre d'affaire des recharges (ca recharges)." \
+\
+
+
+
+\
+        "NB : Notez que la table daily_oss_5g contiennent les informations sur les cellules et leurs trafics (nom cellule, trafic moyen des utilisateurs, etc). daily_clients et " \
+        "monthly_clients contiennent tout les informations quotidiennes et mensuelles des clients (identifiant, infos géographiques et démographiques, segment d'appartenance,etc.). daily_clients_digitaux donne les infos des clients qui utilisent les " \
+        "plateformes digitaux de la SONATEL.daily_conso fournit le montant des consommations des appels (ou voix) internationaux de chaque client " \
+        "(ca_voix_international).monthly_international et reporting_monthly_international donnent le montant des consommations des communications internationaux pour les forfaits, pour les usages hors forfait et " \
+        "leur durée totale. daily_data donne le volume de trafic de la consommation des données mobiles sur le réseau 2G, 3G, 4G et 5G en " \
+        "MégaOctets(Mo) tandisque monthly_data ajoute la commune et les segments (marché et recharges) d'appartenance et la formule tarifaire " \
+        "souscrite par le client.daily_delta_parc et reporting_parc_monthly donnent les infos sur la sortie et le parc des clients (sortant(0/1), reactive(0/1),parc(0/1),nouvelles " \
+        "arrivées(0/1), etc) alors que monthly_sortant ajoute la localité de référence du client (région, département, commune, zone_drv, " \
+        "nom_cellule, etc) tandisque daily_parc fournit les infos globlal du parc des clients (nombre d'entrant, de sortant et de régularité, le parc (0/1), etc)." \
+        "daily_habit_5g_user donne la consommation Data mobile des Clients (volume_go) sur le réseau 5G par type d'application.daily_heavy_user_4g " \
+        "donne le suivi de la consommation 4G des Heavy user. daily_infos_bts donne les informations détaillées sur les sites physiques et leurs " \
+        "cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent " \
+        "le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les " \
+        "volumes de données consommées pour chaque réseau en MégaOctets (Mo). daily_localisation_5g fournit les " \
+        "infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
+        "MAXIT tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services de l'application mobile Maxit." \
+        "daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, " \
+        "daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation " \
+        "(last_active_date) ainsi que la fréquence (nb_j_distinct) pour les recharges, les pass, d'utilisation maxit, d'achat illimix et illiflex et data " \
+        " du trafic le réseau 4G, data trafiqué le réseau global et partciper au programme Sargal. daily_recharges, monthly_recharges et reporting_ca_monthly donne les " \
+        "chiffres d'affaires générés pour tout les recharges (ca recharges) sur les différents canaux ainsi que par canal (par OM (ca_pass_glob_om_jour, ca_credit_om), par Wave (ca_wave), par Seddo(ca_seddo), par cartes (ca_cartes), à l'international (ca_iah), " \
+        "et par self_top_up).monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
+        "reporting_sargal_gift_monthly et reporting_sargal_inscrits donne les infos sur la participation du programma de fidélité Sargal. " \
+        "monthly_souscription et daily_souscription fournissent des informations sur la souscription (ca_data et ca_voix) des catégories (Pass Internet, illimix, illiflex, bundles, Mixel, etc) et " \
+        "types d'offres souscrite (ILLIMIX JOUR 500F, PASS 2.5GO,MIXEL 690F, illiflex mois, etc). reporting_ca_data_monthly fait le reporting du Chiffre d'affaire data (ca_data) ou internet mensuelle. reporting_daily_offer, " \
+        "reporting_offer_monthly et reporting_souscription_monthly font le le reporting sur les souscriptions (sous_mnt,ca_data, ca_voix, ca_sous_HT) aux offres suivant le " \
+        "types de souscription et le type d'offre souscrit. reporting_monthly_terminaux fait le reporting des Data_user ou No Data_user avec la colonne data_status " \
+        "et leur utilisation de smartphone ou pas. daily_sva, monthly_sva et reporting_monthly_sva donne le montant de la souscription et le parc des " \
+        "services à valeur ajouté.daily_voix, monthly_voix et reporting_monthly_voix fournissent le volume ou la durée des appels sortants des abonnées " \
+        "sur les différents opérateurs téléphoniques (Orange, Free, Expresso, ProMobile, etc) ainsi leurs parcs clients correspondant. reporting_5g_daily regroupe les sites techniques " \
+        "avec une série de KPI quotidiens (Key Performance Indicators) liés à l’usage du réseau 5G. reporting_daily_parc fait le reporting quotidienne " \
+        "du comportement (actifs ou inactifs) ou parc des abonnées sur les 90 derniers jours. reporting_daily_ca_pag_xarre, " \
+        "reporting_daily_data_xarre, reporting_daily_trafic_xarre, reporting_recharge_daily_xarre et reporting_xarre_offer_nrt " \
+        "donnent le chiffres d'affaires généré des voix et SMS en mode PAYG (Pay-As-You-Go) pour les formules ou offres commerciales XARRE, " \
+        "le trafic Internet et le parc d’abonnés par technologie réseau (2G, 3G, 4G, 5G) ventilées par formule commerciale XARRE, le volume " \
+        "de trafic sortant et les parcs d’utilisateurs par type de réseau et d’opérateur (Orange, Expresso, Free, ProMobile, etc) sur les " \
+        "offres XARRE, le chiffre d'affaires généré par les recharges des offres XARRE ainsi que du parc actif pour chaque formule tarifaire " \
+        "XARRE et les souscriptions aux offres XARRE." \
+        

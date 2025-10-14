@@ -1,0 +1,323 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle est l'évolution du ca data par type de souscription"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year,\n    rcdm.month AS month,\n    rcdm.formule_dmgp AS type_de_souscription,\n    SUM(rcdm.ca_data) AS total_ca_data\nFROM \n    reporting_ca_data_monthly AS rcdm\nJOIN \n    (SELECT MAX(year) AS max_year FROM reporting_ca_data_monthly) AS max_year_subquery \n    ON rcdm.year = max_year_subquery.max_year\nWHERE \n    rcdm.formule_dmgp LIKE '%JAMONO%' \n    OR rcdm.formule_dmgp LIKE '%KIRENE%'\n    OR rcdm.formule_dmgp LIKE '%AUTRES%'\nGROUP BY \n    rcdm.year, \n    rcdm.month, \n    rcdm.formule_dmgp\nORDER BY \n    rcdm.year DESC, \n    rcdm.month DESC, \n    total_ca_data DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025,
+        "6": 2025,
+        "7": 2025,
+        "8": 2025,
+        "9": 2025,
+        "10": 2025,
+        "11": 2025,
+        "12": 2025,
+        "13": 2025,
+        "14": 2025,
+        "15": 2025,
+        "16": 2025,
+        "17": 2025,
+        "18": 2025,
+        "19": 2025,
+        "20": 2025,
+        "21": 2025,
+        "22": 2025,
+        "23": 2025,
+        "24": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 5,
+        "2": 5,
+        "3": 5,
+        "4": 5,
+        "5": 4,
+        "6": 4,
+        "7": 4,
+        "8": 4,
+        "9": 4,
+        "10": 3,
+        "11": 3,
+        "12": 3,
+        "13": 3,
+        "14": 3,
+        "15": 2,
+        "16": 2,
+        "17": 2,
+        "18": 2,
+        "19": 2,
+        "20": 1,
+        "21": 1,
+        "22": 1,
+        "23": 1,
+        "24": 1
+      },
+      "type_de_souscription": {
+        "0": "JAMONO ALLO",
+        "1": "KIRENE AVEC ORANGE",
+        "2": "JAMONO NEW S'COOL",
+        "3": "AUTRES",
+        "4": "JAMONO MAX",
+        "5": "KIRENE AVEC ORANGE",
+        "6": "JAMONO ALLO",
+        "7": "JAMONO NEW S'COOL",
+        "8": "AUTRES",
+        "9": "JAMONO MAX",
+        "10": "JAMONO ALLO",
+        "11": "KIRENE AVEC ORANGE",
+        "12": "JAMONO NEW S'COOL",
+        "13": "JAMONO MAX",
+        "14": "AUTRES",
+        "15": "KIRENE AVEC ORANGE",
+        "16": "JAMONO NEW S'COOL",
+        "17": "JAMONO ALLO",
+        "18": "AUTRES",
+        "19": "JAMONO MAX",
+        "20": "JAMONO ALLO",
+        "21": "JAMONO NEW S'COOL",
+        "22": "KIRENE AVEC ORANGE",
+        "23": "JAMONO MAX",
+        "24": "AUTRES"
+      },
+      "total_ca_data": {
+        "0": 136581240.63,
+        "1": 106361432.12,
+        "2": 97170204.76,
+        "3": 23957692.01,
+        "4": 11120466.64,
+        "5": 95592392.01,
+        "6": 85016763.63,
+        "7": 71950901.34,
+        "8": 36969846.07,
+        "9": 9781458.66,
+        "10": 128005563.38,
+        "11": 69222393.31,
+        "12": 67271164.57,
+        "13": 24449327.81,
+        "14": 9627240.62,
+        "15": 82290730.9,
+        "16": 65188900.54,
+        "17": 60515949.42,
+        "18": 23515547.79,
+        "19": 9887292.26,
+        "20": 125126397.6,
+        "21": 114746224.91,
+        "22": 86374632.3,
+        "23": 25185528.99,
+        "24": 6149823.05
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year,\n    rcdm.month AS month,\n    SUM(rcdm.ca_data) AS total_ca_pass_internationaux\nFROM \n    reporting_ca_data_monthly AS rcdm\nWHERE \n    rcdm.year = 2025\n    AND rcdm.formule_dmgp LIKE '%PASS INTERNATIONAUX%'\nGROUP BY \n    rcdm.year, \n    rcdm.month\nORDER BY \n    rcdm.year DESC, \n    rcdm.month DESC;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "total_ca_pass_internationaux": {}
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des souscriptions des pass internationaux en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year,\n    rcdm.month AS month,\n    SUM(rcdm.ca_data) AS ca_souscriptions_pass_internationaux\nFROM \n    reporting_ca_data_monthly AS rcdm\nWHERE \n    rcdm.year = 2025\n    AND rcdm.formule_dmgp LIKE '%PASS INTERNATIONAL%'\nGROUP BY \n    rcdm.year, \n    rcdm.month\nORDER BY \n    rcdm.year DESC, \n    rcdm.month DESC;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "ca_souscriptions_pass_internationaux": {}
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    reporting_monthly_international.year AS year,\n    reporting_monthly_international.month AS month,\n    SUM(reporting_monthly_international.ca_data) AS total_revenu\nFROM \n    reporting_monthly_international\nWHERE \n    reporting_monthly_international.year = 2025\nGROUP BY \n    reporting_monthly_international.year, reporting_monthly_international.month\nORDER BY \n    reporting_monthly_international.year DESC, reporting_monthly_international.month DESC;\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    rcdm.year AS year,\n    rcdm.month AS month,\n    SUM(rcdm.mnt) AS total_revenue\nFROM\n    reporting_daily_maxit AS rcdm\nWHERE\n    rcdm.year = 2025\n    AND rcdm.categorie = 'Telco'\n    AND (rcdm.fonctionnalite LIKE '%PASS SEMAINE ALLO MONDE%' OR rcdm.fonctionnalite LIKE '%PASS VOYAGE ORANGE VOIX EUROPE%')\nGROUP BY\n    rcdm.year,\n    rcdm.month\nORDER BY\n    rcdm.year DESC,\n    rcdm.month DESC;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "total_revenue": {}
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca des pass internationaux en 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    year AS year,\n    month AS month,\n    SUM(ca_data) AS international_pass_revenue\nFROM\n    reporting_ca_data_monthly\nWHERE\n    year = 2025\n    AND (offer_name LIKE '%ALLO MONDE%' OR offer_name LIKE '%VOYAGE ORANGE%' OR types LIKE '%INTERNATIONAL%')\nGROUP BY\n    year,\n    month\nORDER BY\n    year DESC,\n    month DESC;\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca illiflex"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    year AS year,\n    month AS month,\n    SUM(sous_mnt) AS ca_illiflex\nFROM\n    daily_souscription\nWHERE\n    types = 'ILLIFLEX'\n    AND year = YEAR(CURRENT_DATE())\nGROUP BY\n    year,\n    month\nORDER BY\n    year DESC,\n    month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025
+      },
+      "month": {
+        "0": 6,
+        "1": 5,
+        "2": 4,
+        "3": 3,
+        "4": 2,
+        "5": 1
+      },
+      "ca_illiflex": {
+        "0": 6004.089996337891,
+        "1": 5226.800048828125,
+        "2": 2263.2899780273438,
+        "3": 4325.220001220703,
+        "4": 8520.570007324219,
+        "5": 4221.790008544922
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le Ca international"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    ds.year AS year,\n    ds.month AS month,\n    SUM(ds.ca_data + ds.ca_voix) AS international_revenue\nFROM\n    daily_souscription AS ds\nWHERE\n    ds.types = 'INTERNATIONAL'\n    AND ds.year = YEAR(CURRENT_DATE())\nGROUP BY\n    ds.year,\n    ds.month\nORDER BY\n    ds.year DESC,\n    ds.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025
+      },
+      "month": {
+        "0": 6,
+        "1": 5,
+        "2": 2,
+        "3": 1
+      },
+      "international_revenue": {
+        "0": 500.0,
+        "1": 1700.0,
+        "2": 3190.0,
+        "3": 2690.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi la répartition du Ca recharge par DRV"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    ms.year AS year,\n    ms.month AS month,\n    ms.zone_DRV AS zone_DRV,\n    SUM(rcm.ca_recharges) AS total_ca_recharges\nFROM\n    monthly_sortants AS ms\nJOIN\n    reporting_ca_monthly AS rcm\nON ms.ca_cr_commune = rcm.ca_cr_commune\nWHERE ms.year = YEAR(CURRENT_DATE())\nAND rcm.year = YEAR(CURRENT_DATE())\nGROUP BY\n    ms.year,\n    ms.month,\n    ms.zone_DRV\nORDER BY\n    ms.year DESC,\n    ms.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025,
+        "6": 2025,
+        "7": 2025,
+        "8": 2025
+      },
+      "month": {
+        "0": 1,
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1
+      },
+      "zone_DRV": {
+        "0": "",
+        "1": "CENTRE",
+        "2": "DAKAR 1",
+        "3": "DAKAR 2",
+        "4": "EST",
+        "5": "NORD",
+        "6": "Roaming",
+        "7": "SUD",
+        "8": "SUD EST"
+      },
+      "total_ca_recharges": {
+        "0": 774125.0,
+        "1": 5773972451.0,
+        "2": 1304809156.0,
+        "3": 2452392246.0,
+        "4": 400669525.0,
+        "5": 1401264643.0,
+        "6": 28254405.0,
+        "7": 246038891.0,
+        "8": 686901801.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi les types et marques d’appareils les plus utilisés par zone"
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi les types et marques d’appareils les plus utilisés par zone"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    mt.year AS year,\n    mt.month AS month,\n    mt.REGION AS region,\n    mt.DEPARTEMENT AS departement,\n    mt.commune_arrondissement AS commune_arrondissement,\n    mt.type_appareil AS type_appareil,\n    mt.marque AS marque,\n    COUNT(*) AS usage_count\nFROM\n    monthly_terminaux AS mt\nWHERE mt.year = YEAR(CURRENT_DATE())\nGROUP BY\n    mt.year,\n    mt.month,\n    mt.REGION,\n    mt.DEPARTEMENT,\n    mt.commune_arrondissement,\n    mt.type_appareil,\n    mt.marque\nORDER BY\n    mt.REGION,\n    mt.DEPARTEMENT,\n    mt.commune_arrondissement,\n    usage_count DESC;\n\n",
+    "content_data": {}
+  }
+]

@@ -1,0 +1,138 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle est l'évolution du trafic data"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcdm.year AS year, \n    rcdm.month AS month,\n    SUM(rcdm.volumes) AS total_volume_data,\n    SUM(rcdm.parc_data_facturer) AS total_clients\nFROM \n    reporting_ca_data_monthly AS rcdm\nJOIN \n    (SELECT MAX(year) AS max_year FROM reporting_ca_data_monthly) AS max_year_subquery \n    ON rcdm.year = max_year_subquery.max_year\nWHERE \n    rcdm.segment_marche IN ('JEUNES', 'ENTRANT', 'MILIEU DE MARCHE', 'HAUT DE MARCHE', 'TRES HAUT DE MARCHE')\nGROUP BY \n    rcdm.year, rcdm.month\nORDER BY \n    rcdm.year DESC, rcdm.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "total_volume_data": {
+        "0": 399.7,
+        "1": 276.8,
+        "2": 362.7,
+        "3": 200.85,
+        "4": 408.66
+      },
+      "total_clients": {
+        "0": 76010.0,
+        "1": 60998.0,
+        "2": 82473.0,
+        "3": 41224.0,
+        "4": 83075.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca seddo d'Octobre 2024 à Mai 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    rcm.year AS year, \n    rcm.month AS month, \n    SUM(rcm.ca_seddo) AS ca_seddo_total\nFROM \n    reporting_ca_monthly AS rcm\nWHERE \n    (rcm.year = 2024 AND rcm.month >= 10) \n    OR \n    (rcm.year = 2025 AND rcm.month <= 5)\nGROUP BY \n    rcm.year, \n    rcm.month\nORDER BY \n    rcm.year ASC, \n    rcm.month ASC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2024,
+        "1": 2024,
+        "2": 2024,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025,
+        "6": 2025,
+        "7": 2025
+      },
+      "month": {
+        "0": 10,
+        "1": 11,
+        "2": 12,
+        "3": 1,
+        "4": 2,
+        "5": 3,
+        "6": 4,
+        "7": 5
+      },
+      "ca_seddo_total": {
+        "0": 268023264.0,
+        "1": 186277616.0,
+        "2": 239452380.0,
+        "3": 227628915.0,
+        "4": 168175652.0,
+        "5": 270078320.0,
+        "6": 272837892.0,
+        "7": 286687040.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "Donne moi le parc actif orange de 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    parc.year AS year, \n    parc.month AS month, \n    SUM(parc.parc_90days) AS total_parc_actif \nFROM \n    reporting_daily_parc AS parc \nWHERE \n    parc.year = 2025 \nGROUP BY \n    parc.year, \n    parc.month \nORDER BY \n    parc.year DESC, \n    parc.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025
+      },
+      "month": {
+        "0": 1
+      },
+      "total_parc_actif": {
+        "0": 1061.0
+      }
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca des offres illimix"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    ds.year AS year,\n    ds.month AS month,\n    SUM(ds.sous_mnt) AS total_ca_illimix\nFROM \n    daily_souscription AS ds\nWHERE \n    ds.year = YEAR(CURRENT_DATE()) \n    AND ds.offer_name LIKE '%ILLIMIX%'\nGROUP BY \n    ds.year, ds.month\nORDER BY \n    ds.year DESC, ds.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025,
+        "5": 2025
+      },
+      "month": {
+        "0": 6,
+        "1": 5,
+        "2": 4,
+        "3": 3,
+        "4": 2,
+        "5": 1
+      },
+      "total_ca_illimix": {
+        "0": 68500.0,
+        "1": 102600.0,
+        "2": 72100.0,
+        "3": 82300.0,
+        "4": 48200.0,
+        "5": 100800.0
+      }
+    }
+  }
+]

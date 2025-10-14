@@ -1,0 +1,60 @@
+```json
+[
+  {
+    "nom_table": "reporting_sargal_echangeurs_mon",
+    "colonnes": {
+      "DATE_LOADED": "Date et heure d’extraction ou chargement",
+      "formule_dmgp": "Offre tarifaire souscrite (JAMONO MAX, ALLO, NEW S’COOL…)",
+      "segment_marche": "Segment marketing du client (JEUNES, MILIEU DE MARCHE, AUTRES, etc.)",
+      "SEGMENT_RECHARGE": "Classification comportementale basée sur la recharge (Middle, Super High, etc.)",
+      "ca_cr_commune": "Commune d’usage principal",
+      "nb_subs": "Nombre d’abonnés dans la commune qui ont eu à échangé des points sargal",
+      "total_point_echanges": "Nombre total de points d’échanges (agents OM, revendeurs, etc.) dans la commune",
+      "year": "Année d’observation",
+      "month": "Mois d’observation"
+    },
+    "explication": "Cette table est essentielle car elle fournit des informations sur les échangeurs Sargal (points d’échange) et le nombre d’abonnés qui les utilisent. Les colonnes 'year' et 'month' permettent l'analyse temporelle, et 'nb_subs' et 'total_point_echanges' sont utiles pour calculer la pénétration."
+  },
+  {
+    "nom_table": "reporting_sargal_gift_monthly",
+    "colonnes": {
+      "DATE_LOADED": "Date et heure de chargement des données",
+      "sargal_gift_name": "Libellé du cadeau offert (ex. Pass 75Mo, 10 min appel)",
+      "formule_dmgp": "Offre tarifaire du bénéficiaire (ex. JAMONO ALLO, NEW S’COOL, etc.)",
+      "segment_marche": "Segment marketing du client (JEUNES, AUTRES, KIRENE, etc.)",
+      "SEGMENT_RECHARGE": "Classe du client selon la recharge (S0, Mass-Market, Super High...)",
+      "region_90j": "Région d’usage principal sur les 90 derniers jours",
+      "departement_90j": "Département du client",
+      "ca_cr_commune_90j": "Commune d’usage principal du client",
+      "type": "Type de cadeau offert (ex. TELCO, Partenaire, Promotionnelle)",
+      "cout_cadeau": "Coût marketing estimé du cadeau",
+      "cost_cdr": "Coût réel sur le système de rating (CDR = Call Detail Record)",
+      "nb_transactions": "Nombre total d’attributions du cadeau (par exemple, 9 Pass attribués)",
+      "nb_subs": "Nombre de souscriptions de cadeau (Sargal_gift_name)",
+      "year": "Année d’attribution du cadeau",
+      "month": "Mois d’attribution"
+    },
+    "explication": "Cette table fournit des informations sur les cadeaux Sargal. Bien que pas directement liée aux échangeurs, elle peut aider à comprendre les comportements des clients Sargal. Les colonnes 'year' et 'month' sont nécessaires pour l'analyse temporelle."
+  },
+  {
+    "nom_table": "reporting_sargal_inscrits",
+    "colonnes": {
+      "DATE_LOADED": "Date de chargement des données",
+      "subscribed_date": "Date d’activation de la ligne / abonnement initial",
+      "segment_marche": "Profil marketing de l’abonné (JEUNES, ENTRANT, etc.)",
+      "SEGMENT_RECHARGE": "Profil de recharge (S0, Mass-Market, Middle, etc.)",
+      "formule_dmgp": "Formule tarifaire souscrite",
+      "region_90j": "Région d’usage dominante sur les 90 derniers jours",
+      "departement_90j": "Département d’usage dominant",
+      "ca_cr_commune_90j": "Commune d’usage principale",
+      "SARGAL_BALANCE_BRACKETS": "Classe de balance SARGAL (tranche) comme :• 1 Bal 1 AND 100• 2 Bal 100 AND 500• 3 Bal 500 AND 1000",
+      "nb_subs": "Nombre de clients inscrits",
+      "balance_sargal": "Somme totale des balances SARGAL observées pour ce groupe",
+      "year": "Année de l’observation",
+      "month": "mois de l’observation",
+      "day": "jour de l’observation"
+    },
+    "explication": "Cette table donne des informations sur les clients inscrits au programme Sargal. Les colonnes 'year' et 'month' sont nécessaires pour l'analyse temporelle."
+  }
+]
+```

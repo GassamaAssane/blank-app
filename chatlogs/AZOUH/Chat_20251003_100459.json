@@ -1,0 +1,55 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle est l'évolution du trafic data"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    md.year AS year,\n    md.month AS month,\n    SUM(md.volume) AS total_volume\nFROM \n    monthly_data AS md\nGROUP BY \n    md.year, md.month\nORDER BY \n    md.year DESC, md.month DESC;\n\n",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle est l'évolution du trafic data"
+  },
+  {
+    "role": "user",
+    "content_request": "Quelle est l'évolution du trafic data"
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca des souscritions years to date de 2025"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT \n    ms.year AS year,\n    ms.month AS month,\n    SUM(ms.sous_mnt) AS total_ca_souscriptions\nFROM \n    monthly_souscription AS ms\nWHERE \n    ms.year = 2025\nGROUP BY \n    ms.year, \n    ms.month\nORDER BY \n    ms.year DESC, \n    ms.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "total_ca_souscriptions": {
+        "0": 859838.42,
+        "1": 702013.35,
+        "2": 581487.87,
+        "3": 545277.34,
+        "4": 802836.4
+      }
+    }
+  }
+]

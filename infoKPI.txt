@@ -1,0 +1,41 @@
+Analyse des KPIs pertinents pour le chiffre d'affaires total (ca_total)
+
+L'échantillon de données fourni présente l'évolution du chiffre d'affaires total (ca_total) sur 5 mois consécutifs. Pour analyser la performance de ce chiffre d'affaires, il est crucial d'identifier les KPIs qui permettent d'expliquer les variations observées. En se basant sur le RAG, plusieurs KPIs peuvent être pertinents, notamment ceux liés aux revenus, au parc d'abonnés et au trafic de données.
+
+Voici une liste de KPIs recommandés, avec une explication de leur pertinence et de leur application au contexte métier :
+
+**KPIs Recommandés :**
+
+*   **KPI 1 : CA Data**
+
+    *   **Explication :** Le CA Data représente le chiffre d'affaires généré par la vente de forfaits de données ou par la consommation de données des abonnés.
+    *   **Pertinence :** Une variation du CA total peut être due à une variation du CA Data. Analyser le CA Data permet de comprendre si l'évolution du chiffre d'affaires global est liée à la consommation de données.
+    *   **Adaptation au contexte :** Calculer le CA Data avec les mêmes dimensions que le CA total (par mois, par exemple) permet de comparer les évolutions et d'identifier une corrélation.
+
+*   **KPI 2 : Montant PASS**
+
+    *   **Explication :** Le Montant PASS représente le chiffre d'affaires généré par la vente de Pass (souscriptions à des offres spécifiques).
+    *   **Pertinence :** Une variation du CA total peut être due à une variation du Montant PASS. Analyser le Montant PASS permet de comprendre si l'évolution du chiffre d'affaires global est liée à la vente de Pass.
+    *   **Adaptation au contexte :** Calculer le Montant PASS avec les mêmes dimensions que le CA total (par mois, par exemple) permet de comparer les évolutions et d'identifier une corrélation.
+
+*   **KPI 3 : Parc Pass**
+
+    *   **Explication :** Le Parc Pass représente le nombre d'abonnés ayant souscrit à un Pass.
+    *   **Pertinence :** Une variation du CA total peut être due à une variation du Parc Pass. Analyser le Parc Pass permet de comprendre si l'évolution du chiffre d'affaires global est liée à l'évolution du nombre d'abonnés Pass.
+    *   **Adaptation au contexte :** Calculer le Parc Pass avec les mêmes dimensions que le CA total (par mois, par exemple) permet de comparer les évolutions et d'identifier une corrélation.
+
+*   **KPI 4 : Parc Bundle**
+
+    *   **Explication :** Le Parc Bundle représente le nombre d'abonnés ayant souscrit à une offre groupée (Bundle).
+    *   **Pertinence :** Une variation du CA total peut être due à une variation du Parc Bundle. Analyser le Parc Bundle permet de comprendre si l'évolution du chiffre d'affaires global est liée à l'évolution du nombre d'abonnés Bundle.
+    *   **Adaptation au contexte :** Calculer le Parc Bundle avec les mêmes dimensions que le CA total (par mois, par exemple) permet de comparer les évolutions et d'identifier une corrélation.
+
+*   **KPI 5 : Trafic Data**
+
+    *   **Explication :** Le Trafic Data représente le volume total de données consommé par les abonnés.
+    *   **Pertinence :** Une variation du CA total peut être due à une variation du Trafic Data. Analyser le Trafic Data permet de comprendre si l'évolution du chiffre d'affaires global est liée à la consommation de données.
+    *   **Adaptation au contexte :** Calculer le Trafic Data avec les mêmes dimensions que le CA total (par mois, par exemple) permet de comparer les évolutions et d'identifier une corrélation.
+
+**Conclusion :**
+
+L'analyse de ces KPIs, en complément du CA total, permettra d'identifier les facteurs clés qui influencent la performance globale et de prendre des décisions éclairées pour optimiser les revenus.

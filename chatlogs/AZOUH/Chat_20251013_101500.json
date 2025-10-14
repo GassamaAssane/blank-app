@@ -1,0 +1,68 @@
+[
+  {
+    "role": "Assistant",
+    "content_request": " Bienvenue AZOUH ",
+    "content_data": {}
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca payg voix du mois de septembre"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    rcm.year AS year,\n    rcm.month AS month,\n    SUM(rcm.ca_recharges) AS ca_payg_voix\nFROM\n    reporting_ca_monthly AS rcm\nWHERE\n    rcm.month = 9\n    AND rcm.year = YEAR(CURRENT_DATE())\nGROUP BY\n    rcm.year,\n    rcm.month\nORDER BY\n    rcm.year DESC,\n    rcm.month DESC;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "ca_payg_voix": {}
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca payg du mois de septembre"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    reporting_monthly_international.year AS year,\n    reporting_monthly_international.month AS month,\n    SUM(reporting_monthly_international.ca_payg) AS ca_payg\nFROM\n    reporting_monthly_international\nWHERE\n    reporting_monthly_international.month = 9\n    AND reporting_monthly_international.year = YEAR(CURRENT_DATE())\nGROUP BY\n    reporting_monthly_international.year,\n    reporting_monthly_international.month;\n\n",
+    "content_data": {
+      "year": {},
+      "month": {},
+      "ca_payg": {}
+    }
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca payg voix du mois de septembre"
+  },
+  {
+    "role": "user",
+    "content_request": "donne moi le ca pass internationaux"
+  },
+  {
+    "role": "assistant",
+    "content_request": "-- Requête SQL envoyée :\n\nSELECT\n    reporting_monthly_international.year AS year,\n    reporting_monthly_international.month AS month,\n    SUM(reporting_monthly_international.ca_pass) AS ca_pass_international\nFROM\n    reporting_monthly_international\nWHERE reporting_monthly_international.year = YEAR(CURRENT_DATE())\nGROUP BY\n    reporting_monthly_international.year,\n    reporting_monthly_international.month\nORDER BY\n    reporting_monthly_international.year DESC,\n    reporting_monthly_international.month DESC;\n\n",
+    "content_data": {
+      "year": {
+        "0": 2025,
+        "1": 2025,
+        "2": 2025,
+        "3": 2025,
+        "4": 2025
+      },
+      "month": {
+        "0": 5,
+        "1": 4,
+        "2": 3,
+        "3": 2,
+        "4": 1
+      },
+      "ca_pass_international": {
+        "0": 7697400.0,
+        "1": 5452500.0,
+        "2": 4758040.0,
+        "3": 2302950.0,
+        "4": 4579070.0
+      }
+    }
+  }
+]
