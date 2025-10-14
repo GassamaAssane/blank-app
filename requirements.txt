@@ -189,7 +189,7 @@ python-dotenv==1.1.1
 pytube==15.0.0
 pytz==2025.2
 pyvis==0.3.2
-pywin32==311
+pywin32==311; platform_system == "Windows"
 PyYAML==6.0.2
 qdrant-client==1.15.1
 referencing==0.36.2
@@ -251,4 +251,5 @@ wrapt==1.17.3
 yarl==1.20.1
 zipp==3.23.0
 zstandard==0.23.0
+
 
