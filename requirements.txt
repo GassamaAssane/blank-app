@@ -27,8 +27,7 @@ click==8.2.1
 cohere==5.17.0
 colorama==0.4.6
 coloredlogs==15.0.1
-crewai==0.165.1
-crewai-tools==0.62.3
+crewai==0.40.0
 cryptography==45.0.6
 dataclasses-json==0.6.7
 decorator==5.2.1
@@ -152,7 +151,7 @@ pdfminer.six==20250506
 pdfplumber==0.11.7
 pillow==11.3.0
 playwright==1.54.0
-plotly==6.3.0
+plotly==5.24.0
 pluggy==1.6.0
 portalocker==2.7.0
 posthog==3.25.0
@@ -194,7 +193,7 @@ PyYAML==6.0.2
 qdrant-client==1.15.1
 referencing==0.36.2
 regex==2025.7.34
-requests==2.32.5
+requests==2.32.3
 requests-oauthlib==2.0.0
 requests-toolbelt==1.0.0
 rich==13.9.4
@@ -251,5 +250,6 @@ wrapt==1.17.3
 yarl==1.20.1
 zipp==3.23.0
 zstandard==0.23.0
+
 
 
