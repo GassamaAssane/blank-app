@@ -27,7 +27,6 @@ click==8.2.1
 cohere==5.17.0
 colorama==0.4.6
 coloredlogs==15.0.1
-crewai==0.40.0
 cryptography==45.0.6
 dataclasses-json==0.6.7
 decorator==5.2.1
@@ -250,6 +249,7 @@ wrapt==1.17.3
 yarl==1.20.1
 zipp==3.23.0
 zstandard==0.23.0
+
 
 
 
