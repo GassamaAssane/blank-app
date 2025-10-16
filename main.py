@@ -22,7 +22,7 @@ import time
 import uuid
 from Agents import Agent_analyse_recommand, Agent_SQL, Agent_SQL_Gem, SQL_Agent, Agent_KPI_req_gemini, \
                                 analyse_recommand_gemini, Agent_KPI_req
-from connection_DB import connect_db
+from connection_DB import connect_db, connect_db_railway
 
 
 st.set_page_config(page_title="INSIGHT NARRATOR", page_icon="logo.png",
@@ -1110,8 +1110,8 @@ else :
                 #st.session_state.analyse = True
 
                 try :
-                    #result_request = connect_db(request=sql_request)
-                    result_request = connect_db(request=st.session_state.sql_request)
+                    result_request = connect_db_railway(request=sql_request)
+                    #result_request = connect_db(request=st.session_state.sql_request)
                     #result_request =pd.read_csv("Résultat_requete.csv", sep= ";")
                     path_result= f"chatlogs/{user}/Resultat_requete.csv"
                     #data = result_request.to_csv("Resultat_requete.csv", sep=";")
