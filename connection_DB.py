@@ -66,11 +66,11 @@ def connect_db (host = "localhost", user = "root", password = "", database = "sn
 def connect_cloudera(host, database= None , request = None) :
 
     # === Configuration de la connexion ===
-    HIVE_HOST = host  # ex : 'cdh-master.mondomaine.com'
-    HIVE_PORT = 10000                  # Port par défaut de HiveServer2
-    #USERNAME = 'votre_utilisateur'     # LDAP ou compte Cloudera
-    #PASSWORD = 'votre_mot_de_passe'
-    DATABASE = database               # Base Hive
+    HIVE_HOST = turntable.proxy.rlwy.net  # ex : 'cdh-master.mondomaine.com'
+    HIVE_PORT = 22871                  # Port par défaut de HiveServer2
+    USERNAME = 'root'     # LDAP ou compte Cloudera
+    PASSWORD = 'uhaeZgWgEoiampldQuUWULtzJpNoPNBr'
+    DATABASE = railway               # Base Hive
     AUTH_MECHANISM = 'PLAIN'           # ou 'LDAP', 'GSSAPI' selon configuration
 
     
@@ -112,6 +112,67 @@ def connect_cloudera(host, database= None , request = None) :
         st.error("Erreur lors de la connexion à Hive :", e)
 
     finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
+    return df
+
+
+
+
+####################################################################################
+#            Connexion avec Railway Database
+####################################################################################
+
+def connect_db_railway(host = "turntable.proxy.rlwy.net", user = "root", password = "uhaeZgWgEoiampldQuUWULtzJpNoPNBr", database = "railway", port = 22871, request = None) :
+
+    df = pd.DataFrame()
+    try:
+    # Connexion à la base
+        conn = mysql.connector.connect(
+            host=host,
+            user=user,
+            port = port ,
+            password=password,
+            database=database
+        )
+
+        
+        if request is None:
+            st.write(" Aucune requête SQL fournie. ")
+            return df
+
+        # Création du curseur
+        cursor = conn.cursor()
+
+        # Requête SQL 
+        query = request  
+        #query = "SELECT msisdn, monthly_maxit.service FROM MONTHLY_MAXIT WHERE monthly_maxit.month = 1;"
+
+        # Execution de la requete
+        cursor.execute(query)
+
+        #Recuperation des colonnes
+        column_names = [i[0] for i in cursor.description]
+
+        # Récupération des données
+        rows = cursor.fetchall()
+        #for row in rows:
+        #    print(row)
+
+        # Mis a jour du data frame 
+        df = pd.DataFrame(rows, columns=column_names)
+        print("Connexion réussie à la base de données...")
+        #st.write(df.head(10))
+        #print(df.head())
+        #print(df.shape())
+    except mysql.connector.Error as err:
+        st.error(f"Erreur de connexion: {err}")
+
+    finally:
+        # Fermeture du curseur et de la connexion
         if 'cursor' in locals():
             cursor.close()
         if 'conn' in locals():
