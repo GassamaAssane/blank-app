@@ -136,7 +136,8 @@ def connect_db_railway(host = "turntable.proxy.rlwy.net", user = "root", passwor
             user=user,
             port = port ,
             password=password,
-            database=database
+            database=database,
+            auth_plugin='caching_sha2_password'
         )
 
         
