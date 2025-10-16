@@ -1195,7 +1195,8 @@ else :
                             sql_query, info_kpi =Agent_KPI_req_gemini(echant, user_msg,st.session_state.sql_request, path)
                             #sql_query, info_kpi, reqest_cost =Agent_KPI_req(echant, user_msg,st.session_state.sql_request, path)
 
-                            result_kpi = connect_db(request=sql_query)
+                            #result_kpi = connect_db(request=sql_query)
+                            result_kpi = connect_db_railway(request=sql_query)
                             #result_request =pd.read_csv("Résultat_requete.csv", sep= ";")
                             path_result= f"chatlogs/{user}/Resultat_kpi.csv"
                             #data = result_request.to_csv("Resultat_requete.csv", sep=";")
