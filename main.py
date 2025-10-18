@@ -553,7 +553,7 @@ def create_user(username, password):
     save_history([
         {
             "role": "Assistant",
-            "content_request": f" Bienvenue **{username}** ",
+            "content_request": f" Bienvenue {username} ",
             "content_data" : {}
         }], os.path.join(user_dir, f"Chat_{dt.now().strftime('%Y%m%d_%H%M%S')}.json"))
     #f"Chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}"    os.path.join(user_dir, "history.json"))
