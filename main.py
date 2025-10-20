@@ -752,7 +752,7 @@ else :
             admin = pd.read_csv("Admin.csv", sep= ";")
             #print(admin.columns)
             #admin.head()
-            admin["date"] = pd.to_datetime(admin["date"], yearfirst=True, format="%Y-%m-%d %H:%M:%S")
+            admin["date"] = pd.to_datetime(admin["date"], yearfirst=True, format="%Y-%m-%d %H:%M")
             admin = admin.sort_values(by="date", ascending=False)
 
             #identifier le mois le plus récent
