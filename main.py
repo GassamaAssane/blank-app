@@ -351,6 +351,18 @@ def Auto_charts(df=None, path="Image") :
                         #st.plotly_chart(fig, use_container_width=True)
 
                         i = i + 1
+
+                elif time_col == "day" :
+                    df_t = df.groupby(time_col)[num].sum().reset_index()
+
+                    df_t["day"] = pd.to_datetime(df_t["day"], yearfirst=True, format="%Y%m%d")
+                    df_t = df_t.sort_values(by="day", ascending=False)
+       #Ajouter une colonne "jour" qui contient le jour du mois
+                    df_t["jour"] = df_t["day"].dt.day
+                    fig = px.line(df_t, x="day", y=num, markers=True, title=f"Évolution de {num} <br>suivant les {time_col}")
+                    fig.write_image(f"{folder}/{i}.png")
+                    charts.append(("Courbe", f"{num}_vs_{time_col}", fig))
+                    i = i + 1
                 else : 
                     continue
 
@@ -470,6 +482,17 @@ def display_charts(df: pd.DataFrame) :
                         fig = px.line(df_t, x="YEARS", y=num, markers=True, title=f"Évolution de {num} <br>suivant les {time_col}")
                         
                         charts.append(("Courbe", f"{num} vs {time_col}", fig))
+
+                elif time_col == "day" :
+                    df_t = df.groupby(time_col)[num].sum().reset_index()
+
+                    df_t["day"] = pd.to_datetime(df_t["day"], yearfirst=True, format="%Y%m%d")
+                    df_t = df_t.sort_values(by="day", ascending=False)
+       #Ajouter une colonne "jour" qui contient le jour du mois
+                    df_t["jour"] = df_t["day"].dt.day
+                    fig = px.line(df_t, x="day", y=num, markers=True, title=f"Évolution de {num} <br>suivant les {time_col}")
+                        
+                    charts.append(("Courbe", f"{num}_vs_{time_col}", fig))
 
                 else :
                     continue
