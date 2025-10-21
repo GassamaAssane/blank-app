@@ -93,7 +93,7 @@ jsonpointer==3.0.0
 jsonref==1.1.0
 jsonschema==4.25.1
 jsonschema-specifications==2025.4.1
-kaleido==1.1.0
+kaleido==0.2.1
 kubernetes==33.1.0
 lancedb==0.24.3
 langchain==0.3.27
@@ -150,7 +150,7 @@ pdfminer.six==20250506
 pdfplumber==0.11.7
 pillow==11.3.0
 playwright==1.54.0
-plotly==6.1.1
+plotly==5.24.1
 pluggy==1.6.0
 portalocker==2.7.0
 posthog==3.25.0
@@ -249,6 +249,7 @@ wrapt==1.17.3
 yarl==1.20.1
 zipp==3.23.0
 zstandard==0.23.0
+
 
 
 
