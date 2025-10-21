@@ -1034,6 +1034,7 @@ else :
         #send = False
         if user_msg:
             st.session_state.user_msg = user_msg
+            st.session_state.last_result = None
 
             # Affiche et stocke le message utilisateur
             st.chat_message("user").markdown(user_msg)
