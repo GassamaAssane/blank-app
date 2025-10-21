@@ -1070,7 +1070,7 @@ else :
                 ### Gestion des caractéristiques de la requete
 
                 #nouvelle_ligne = [1, user_msg, request_cost, execution_time, dt.now().strftime("%Y-%m-%d %H:%M:%S")]
-                nouvelle_ligne = [1, user_msg, 0, execution_time, dt.now().strftime("%Y-%m-%d %H:%M:%S"), st.session_state.sql_request]
+                nouvelle_ligne = [1, user_msg, 0, execution_time, dt.now().strftime("%Y-%m-%d %H:%M"), st.session_state.sql_request]
                 with open("Admin.csv", mode="a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f, delimiter= ";")
                     writer.writerow(nouvelle_ligne)
