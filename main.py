@@ -1205,7 +1205,7 @@ else :
             #df = st.session_state.last_result
             if "last_result" in st.session_state and st.session_state.last_result is not None :
                 df = st.session_state.last_result
-                if ("year" in df.columns and df["year"].nunique() > 1) or ("month" in df.columns and df["month"].nunique() > 1):
+                if ("year" in df.columns and df["year"].nunique() > 1) or ("month" in df.columns and df["month"].nunique() > 1) or ("day" in df.columns and df["day"].nunique() > 1):
             # if "last_result" in st.session_state and (df["year"].nunique() > 1 or df["month"].nunique() > 1):
                 #df = st.session_state.last_result
                 #if df["year"].nunique() > 1 or df["month"].nunique() > 1 :
