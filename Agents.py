@@ -2058,7 +2058,7 @@ def Agent_analyst_RAG_Gemini(requete):
         "et marché (JEUNES, ENTRANT, KIRENE AVEC ORANGE, AUTRES,MILIEU DE MARCHE,HAUT DE MARCHE, TRES HAUT DE MARCHE ) correspondant. Chaque type ou catégorie d'offres contient " \
         "plusieurs offres de souscriptions et formule et catégorie d'offres sont différentes. Notez qu'aussi les offres data font références aux offres de type PASS INTERNET." \
         \
-        "Si vous recevez une question sur le chiffre d'affaire tout court (Donne moi le Ca, quel est l'évolution du CA, etc) sans que l'utilisateur précise le chiffre " \
+        "Si vous recevez une question sur le chiffre d'affaire tout court (par exemple : Donne moi le Ca de 2025, quel est l'évolution du CA par segment, etc) sans que l'utilisateur précise le chiffre " \
         "d'affaire, sachez que l'utilisateur veut simplement le chiffre d'affaire total qui n'est rien d'autre que le chiffre d'affaire des recharges " \
         "(ca recharges). Le chiffre d'affaire seulement fait référence au chiffres d'affaires des recharges(ca_recharges) ou CA total. Pour les questions " \
         "sur la segmentation, ne choisissez jamais les tables de reporting car elle ne sont pas adapté, utilise plutot les tables monthly (mensuelles) " \
@@ -2485,5 +2485,6 @@ def SQL_Agent(requete, user_dir):
         sql_query = None
 
     return sql_query
+
 
 
