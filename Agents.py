@@ -2026,7 +2026,7 @@ def Agent_analyst_RAG_Gemini(requete):
         "cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent " \
         "le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les " \
         "volumes de données consommées pour chaque réseau en MégaOctets (Mo). daily_localisation_5g fournit les " \
-        "infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
+        "infos géographiques des clients et leurs segments et site ou cellule d'appartenance. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
         "MAXIT avec le service utilisé tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services et parcs de l'application mobile Maxit." \
         "daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, " \
         "daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation " \
@@ -2052,6 +2052,9 @@ def Agent_analyst_RAG_Gemini(requete):
         "offres XARRE, le chiffre d'affaires généré par les recharges des offres XARRE ainsi que du parc actif pour chaque formule tarifaire " \
         "XARRE. reporting_xarre_offer_nrt donne le parc, le ca et le volume des souscriptions aux offres XARRE par type d'offres, par offre, par " \
         "segment, par tranches d'heure de souscriptions (ex : 00h-01h, 13h-14h, etc). Donnez en sortie les tables les plus pertinantes pour répondre à la question :"f" {requete}." \
+        "Notez qu'aussi les tables monthly fournissent le segment (segment recharge et marché) d'appartenance de chaque client excepté la table monthly_sortants qui ne donne pas cette information. " \
+        "Les tables daily ne fournissent pas les segments d'appartenance des clients excepté dail_localisation_5g. Les tables reporting " \
+        "présentent au moins l'information sur le segment marché ou bien les deux segments à la fois (segment recharge et marché). " \
         \
         "Sur les souscriptions des offres, Notez que nous avons des catégories ou types d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, NC) avec leur " \
         "formule tarifaire ou commerciale (JAMONO NEW S'COOL, JAMONO ALLO, JAMONO PRO, JAMONO MAX, AUTRES) et leurs segments recharges (Mass-Market, High, Middle, S0, super high) " \
@@ -2485,6 +2488,7 @@ def SQL_Agent(requete, user_dir):
         sql_query = None
 
     return sql_query
+
 
 
 
