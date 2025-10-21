@@ -17,6 +17,9 @@ from datetime import datetime as dt
 import re
 from typing import Dict, List, Any, Optional
 import plotly.express as px
+import plotly.io as pio
+pio.kaleido.scope.default_format = "png"
+
 from itertools import combinations
 import random
 from pathlib import Path
