@@ -2054,7 +2054,8 @@ def Agent_analyst_RAG_Gemini(requete):
         "segment, par tranches d'heure de souscriptions (ex : 00h-01h, 13h-14h, etc). Donnez en sortie les tables les plus pertinantes pour répondre à la question :"f" {requete}." \
         "Notez qu'aussi les tables monthly fournissent le segment (segment recharge et marché) d'appartenance de chaque client excepté la table monthly_sortants qui ne donne pas cette information. " \
         "Les tables daily ne fournissent pas les segments d'appartenance des clients excepté dail_localisation_5g. Les tables reporting " \
-        "présentent au moins l'information sur le segment marché ou bien les deux segments à la fois (segment recharge et marché). " \
+        "présentent au moins l'information sur le segment marché ou bien les deux segments à la fois (segment recharge et marché), de meme quelques informations géographiques des données. " \
+        "Les tables monthly contiennent certaines informations géographiques des clients comme la commune, la région, etc. Privilégiez les tables monthly. " \
         \
         "Sur les souscriptions des offres, Notez que nous avons des catégories ou types d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, NC) avec leur " \
         "formule tarifaire ou commerciale (JAMONO NEW S'COOL, JAMONO ALLO, JAMONO PRO, JAMONO MAX, AUTRES) et leurs segments recharges (Mass-Market, High, Middle, S0, super high) " \
@@ -2488,6 +2489,7 @@ def SQL_Agent(requete, user_dir):
         sql_query = None
 
     return sql_query
+
 
 
 
