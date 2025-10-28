@@ -2055,7 +2055,8 @@ def Agent_analyst_RAG_Gemini(requete):
         "Notez qu'aussi les tables monthly fournissent le segment (segment recharge et marché) d'appartenance de chaque client excepté la table monthly_sortants qui ne donne pas cette information. " \
         "Les tables daily ne fournissent pas les segments d'appartenance des clients excepté dail_localisation_5g. Les tables reporting " \
         "présentent au moins l'information sur le segment marché ou bien les deux segments à la fois (segment recharge et marché), de meme quelques informations géographiques des données. " \
-        "Les tables monthly contiennent certaines informations géographiques des clients comme la commune, la région, etc. Privilégiez les tables monthly. " \
+        "Les tables monthly contiennent certaines informations géographiques des clients comme la commune, la région, etc. Privilégiez toujours les tables monthly, elles contiennnent plus d'informations. " \
+        "Sachez qu'aussi les tables daily_clients, daily_clients_digitaux, daily_infos_bts, daily_infos_otarie, montthly_clients et monthly_sortant contiennent aussi des informations sur les zones de distributions que l'on appelle zone_drv et zone_dvri." \
         \
         "Sur les souscriptions des offres, Notez que nous avons des catégories ou types d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, NC) avec leur " \
         "formule tarifaire ou commerciale (JAMONO NEW S'COOL, JAMONO ALLO, JAMONO PRO, JAMONO MAX, AUTRES) et leurs segments recharges (Mass-Market, High, Middle, S0, super high) " \
@@ -2489,6 +2490,7 @@ def SQL_Agent(requete, user_dir):
         sql_query = None
 
     return sql_query
+
 
 
 
