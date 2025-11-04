@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import random
 import json
+import asyncio
 #from crewai import Agent, Task, LLM, Crew, Process
 #from crewai_tools import JSONSearchTool, RagTool, TXTSearchTool, DallETool
 #from crewai.memory import LongTermMemory
@@ -15,13 +16,16 @@ from pathlib import Path
 import base64
 import os
 from openai import OpenAI
+from mistralai import Mistral
 from PIL import Image
 import math
 import os
 import json
 import pandas as pd
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 from langchain.callbacks import get_openai_callback
+#from langchain_community.callbacks import get_openai_callback
 from langchain.vectorstores import FAISS
 #from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
@@ -37,6 +41,13 @@ import os
 
 openai_key = "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"
 #openai_key = "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"
+
+mixtral_key = "bnccjKG64aj9lgVqC1KzNe1tqnK1eZfm"
+
+# Systeme d'Agent
+new_api = "AIzaSyD9ZstqQTUvpjTPN1wLUP_k4eW3tSdJq9o"
+api_k = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
+
 """
 gpt = LLM(
     #model= "gpt-4-turbo",
@@ -70,17 +81,14 @@ gpt_4 = LLM(
 #    temperature=0.5,
 #    api_key = openai_key
 #)
-"""
-# Systeme d'Agent
-new_api = "AIzaSyD9ZstqQTUvpjTPN1wLUP_k4eW3tSdJq9o"
-api_k = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
+
+
 model_LLM = ['gemini/gemini-2.5-flash-preview-04-17', 'gemini/gemini-2.0-flash', 'gemini/gemini-2.5-flash']
 apis_gem = ["AIzaSyCT-YT7kIIpUvxVhwYCqD3NkUjRQKPwolk", "AIzaSyC3TF0w1DL4wOGf50jNqnv_JKJMjsedP5M", 
             "AIzaSyDztFTQ8q3ydSqwaNu6y-EDptS-3gpfw30", "AIzaSyBxwZpwLsAl3YDWBfnsXd35djouNV3lX3E" ]
 #gem = random.choice(model_LLM)
 #api = random.choice(apis_gem)
 
-"""
 def system(table_desc, caracteristique, history, info_sup,
            request = "Quelles sont les clients qui ont utilisé les services de l'application maxit pour faire un transfert d'argent ou acheter un illiflex pendant le mois de janvier.") :
     last_turns = history[-4:]
@@ -450,7 +458,8 @@ def system(table_desc, caracteristique, history, info_sup,
     #print(system_multi_agent.token_usage)
 
     return sql_query
-    """
+
+"""
 
 
 def extract_sql(path_txt: str) -> str:
@@ -603,6 +612,7 @@ def combine_images_grid(image_paths, output_path="Image/dash.png", images_per_ro
 
 #OpenAI API key
 os.environ["OPENAI_API_KEY"] = openai_key 
+os.environ["MIXTRAL_API_KEY"] = mixtral_key
 
 def dict_to_text(data_item):
     """
@@ -686,13 +696,13 @@ documents = [
 print("ko")
 
 #Découper le texte en chunks
-text_splitter = CharacterTextSplitter(chunk_size=200, chunk_overlap=40)
-#text_splitter = CharacterTextSplitter(chunk_size=400, chunk_overlap=80)
-#text_splitter = CharacterTextSplitter(chunk_size=3000, chunk_overlap=500)
+text_splitter = CharacterTextSplitter(chunk_size=200, chunk_overlap=50)
+#text_splitter = CharacterTextSplitter(chunk_size=400, chunk_overlap=100)
+#text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
 
 #text_splitter = RecursiveCharacterTextSplitter(
-#                    chunk_size=2000,   # chaque chunk fait 1000 caractères max
-#                    chunk_overlap=200  # un petit chevauchement pour le contexte
+#                    chunk_size=1000,   # chaque chunk fait 1000 caractères max
+#                    chunk_overlap=150  # un petit chevauchement pour le contexte
 #                                                )
 
 docs = text_splitter.split_documents(documents)
@@ -869,6 +879,18 @@ def Agent_analyst_RAG_1(requete) :
 
     
     # Tester une question
+    exemple_sortie = {
+        "daily_parc_maxit" : "C’est une table journalière qui fournit les informations sur les clients ou le parc clients qui ont eu à faire  \
+                                une activité sur l’application mobile MAXIT. Elle contient les données d’usage de l’application MAXIT pour \
+                                chaque abonné avec des informations sur la fréquence, la récence et la périodicité de l’utilisation. Chaque \
+                                ligne correspond à un MSISDN (identifiant unique d’un abonné) et inclut la date de dernière activité (last_active_date) \
+                                ainsi que le nombre de jours distincts d’activité (nb_j_distinct). Les colonnes year, month et day précisent la période \
+                                d’utilisation de l’application. Elle permet d’identifier les clients actifs ou inactifs de l’application mobile MAXIT ou \
+                                en déclin d’usage, de segmenter les utilisateurs MAXIT selon la fréquence d’usage (nb_j_distinct) et la récence \
+                                (last_active_date). Elle est conçue pour analyser l’engagement des clients sur l’application mobile MAXIT."
+    }
+    
+    # Tester une question
     query = "Vous un Expert Analyste base de données et recherches documentaire.Votre but est de rechercher sur les caractéristiques d'une  \
         base de donnée les tables pour répondre à une question métier.En résumé,vous etes un expert en analyse de données avec plus de 25 ans d'expérience \
         et expert en gouvernance de données : tu documentes des bases  de données métier pour que les équipes comme le BI comprennent chaque \
@@ -907,7 +929,8 @@ def Agent_analyst_RAG_1(requete) :
         Si la réponse est dans 2 ou plusieurs tables, Vous donnerez tout les tables concernées \
         pour répondre à la question. Analysez la question pour voir, est ce que vous devez de faire une requete \
         simple , d'aggrégation, de jointure ou combiné. Notez que 'OM' signifie 'Orange Money'. Ne donne jamais un " \
-        "nom de table qui n'existe pas dans le catalogue de données fournies dans le RAG. " \
+        "nom de table qui n'existe pas dans le catalogue de données fournies dans le RAG. Parfois la réponse à la question peut nécessiter de " \
+        "faire une jointure entre plusieurs tables, dans ce cas, donnez en retour tout les tables nécessaires à la question" \
         "Notez que la jointure entre les tables peut etre fait entre des colonnes qui ne représente pas l'identifiant " \
         "des clients. Faites bien la différence entre les tables parc, de l'application Maxit, de souscriptions des offres, du trafic réseau (2G/3G/4G/5G) ou de " \
         "consommation de donnée (data) mobile, du programme de fidélité Sargal, de voix, recharges ou chiffre d'affaires (ca), pour les trafic à " \
@@ -927,8 +950,9 @@ def Agent_analyst_RAG_1(requete) :
         "NB : Notez que la table daily_oss_5g contiennent les informations sur les cellules et leurs trafics (nom cellule, trafic moyen des utilisateurs, etc). daily_clients et " \
         "monthly_clients contiennent les informations quotidiennes et mensuelles des clients (identifiant, infos géographiques et démographiques, segment d'appartenance,etc.). daily_clients_digitaux donne les infos des clients qui utilisent les " \
         "plateformes digitaux.daily_conso fournit le montant des consommations des appels (ou voix) internationaux de chaque client " \
-        "(ca_voix_international).monthly_international et reporting_monthly_international donnent le montant ou CA des consommations des communications internationaux pour les forfaits, pour les usages hors forfait et " \
-        "leur durée totale. daily_data donne le volume de trafic de la consommation des données mobiles sur le réseau 2G, 3G, 4G et 5G en " \
+        "(ca_voix_international).monthly_international et reporting_monthly_international donnent le montant ou CA des consommations des communications internationaux pour les forfaits appelé ca_pass, pour les usages hors forfait appelé ca_payg et " \
+        "leur durée totale(duration_mn_payg, duration_mn_pass), et leur parc (parc_pass, parc_payg, parc_international). Autrement dit, les deux tables donnent le CA payg et CA pass, durée des pass et des payg, le parc payg et pass, mais notez que " \
+        "c'est des infos sur les clients international. daily_data donne le volume de trafic de la consommation des données mobiles sur le réseau 2G, 3G, 4G et 5G en " \
         "MégaOctets(Mo) tandisque monthly_data ajoute la commune et les segments (marché et recharges) d'appartenance et la formule tarifaire " \
         "souscrite par le client.daily_delta_parc et reporting_parc_monthly donnent les infos sur la sortie et le parc des clients (sortant(0/1), reactive(0/1),parc(0/1),nouvelles " \
         "arrivées(0/1), etc) alors que monthly_sortant ajoute la localité de référence du client (région, département, commune, zone_drv, " \
@@ -937,24 +961,30 @@ def Agent_analyst_RAG_1(requete) :
         "donne le suivi de la consommation 4G des Heavy user. daily_infos_bts donne les informations détaillées sur les sites physiques et leurs " \
         "cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent " \
         "le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les " \
-        "volumes de données consommées pour chaque réseau en MégaOctets (Mo). daily_localisation_5g fournit les " \
+        "volumes de données consommées pour chaque réseau en MégaOctets (Mo).monthly_terminaux contiennent aussi les infos sur la commune, segment marche et le formule tarifaire. daily_localisation_5g fournit les " \
         "infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
-        "MAXIT avec le service utilisé tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services et parcs de l'application mobile Maxit." \
+        "MAXIT avec le service utilisé tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services et parcs de l'application mobile Maxit. " \
+        "monthly_maxit, reporting_daily_maxit, reporting_monthly_maxit et reporting_daily_parc_maxit contiennent aussi les infos sur les communes, les segments et les formules tarifaires." \
         "daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, " \
         "daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation " \
         "(last_active_date) ainsi que la fréquence (nb_j_distinct) pour les recharges, les pass, d'utilisation maxit, d'achat illimix et illiflex et data " \
         " du trafic le réseau 4G, de data trafiqué le réseau global et de partciper au programme Sargal. daily_recharges, monthly_recharges et reporting_ca_monthly donne les " \
         "chiffres d'affaires total (ca_recharge) ou générés pour tout les recharges (ca_recharges) sur les différents canaux ainsi que par canal (par OM " \
         "(ca_pass_glob_om_jour, ca_credit_om), par Wave (ca_wave), par Seddo(ca_seddo), par cartes (ca_cartes), à l'international (ca_iah), " \
-        "et par self_top_up).monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
-        "reporting_sargal_gift_monthly et reporting_sargal_inscrits donne les infos sur la participation du programme de fidélité Sargal. " \
+        "et par self_top_up).monthly_recharges et reporting_ca_monthly contiennent aussi les infos sur les communes, les segments et les formules tarifaires. monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
+        "reporting_sargal_gift_monthly et reporting_sargal_inscrits donne les infos sur la participation du programme de fidélité Sargal. monthly_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
+        "reporting_sargal_gift_monthly et reporting_sargal_inscrits contiennent aussi les infos sur la localisation, les segments et les formules tarifaires. " \
         "monthly_souscription et daily_souscription fournissent des informations ou le CA des souscriptions (ca_data et ca_voix) des catégories ou type d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, etc) et " \
-        "et de l'offre souscrite (ILLIMIX JOUR 500F, PASS 2.5GO,MIXEL 690F, illiflex mois, etc) et permettent aussi de déterminer les clients qui utilisent du data ou voix ou les deux à la fois. reporting_ca_data_monthly fait le reporting du Chiffre d'affaire data (ca_data) mensuelle. reporting_daily_offer, " \
+        "et de l'offre souscrite (ILLIMIX JOUR 500F, PASS 2.5GO,MIXEL 690F, illiflex mois, etc) et permettent aussi de déterminer les clients qui utilisent du data ou voix ou les deux à la fois. monthly_souscription contient aussi les " \
+        "infos sur la localisation, les segments et les formules tarifaires mais pas daily_souscription. Le nom complet des offres est enrégistré dans la table daily_souscription mais pas dans monthly_souscription.Autrement dit, " \
+        "Ce dernier contient uniquement le type de l'offre mais pas le nom complet de l'offre reporting_ca_data_monthly fait le " \
+        "reporting du Chiffre d'affaire data (ca_data) mensuelle des communes, des segments et des formules tarifaires. reporting_daily_offer, " \
         "reporting_offer_monthly et reporting_souscription_monthly font le le reporting sur les souscriptions des offres (sous_mnt,ca_data, ca_voix, ca_sous_HT) suivant le " \
-        "types de souscription et le type d'offre souscrit. reporting_monthly_terminaux fait le reporting des Data_user ou No Data_user avec la colonne data_status " \
+        "types de souscription, le type d'offre souscrit, la commune, les segments, les formules tarifaires. reporting_monthly_terminaux fait le reporting des Data_user ou No Data_user suivant les communes, segments et formules tarifaires avec la colonne data_status " \
         "et leur utilisation de smartphone ou pas. daily_sva, monthly_sva et reporting_monthly_sva donne le montant de la souscription et le parc des " \
-        "services à valeur ajouté.daily_voix, monthly_voix et reporting_monthly_voix fournissent le volume ou la durée des appels sortants des abonnées " \
-        "sur les différents opérateurs téléphoniques (Orange, Free, Expresso, ProMobile, etc) ainsi leurs parcs clients correspondant. reporting_5g_daily regroupe les sites techniques " \
+        "services à valeur ajouté.monthly_sva et reporting_monthly_sva ajoutent les segments et communes d'appartenance de meme que le formule tarifaire utilisé. " \
+        "daily_voix, monthly_voix et reporting_monthly_voix fournissent le volume ou la durée des appels sortants des abonnées " \
+        "sur les différents opérateurs téléphoniques (Orange, Free, Expresso, ProMobile, etc) ainsi leurs parcs clients correspondant. monthly_voix et reporting_monthly_voix ajoutent les segments et communes d'appartenance de meme que le formule tarifaire utilisé. reporting_5g_daily regroupe les sites techniques " \
         "avec une série de KPI quotidiens (Key Performance Indicators) et leur volumes de données consommées liés à l’usage du réseau 5G. reporting_daily_parc fait le reporting quotidienne " \
         "du comportement (actifs ou inactifs) ou parc des abonnées sur les 90 derniers jours. reporting_daily_ca_pag_xarre, " \
         "reporting_daily_data_xarre, reporting_daily_trafic_xarre et reporting_recharge_daily_xarre " \
@@ -962,8 +992,16 @@ def Agent_analyst_RAG_1(requete) :
         "le trafic Internet et le parc d’abonnés par technologie réseau (2G, 3G, 4G, 5G) ventilées par formule commerciale XARRE, le volume " \
         "de trafic sortant et les parcs d’utilisateurs par type de réseau et d’opérateur (Orange, Expresso, Free, ProMobile, etc) sur les " \
         "offres XARRE, le chiffre d'affaires généré par les recharges des offres XARRE ainsi que du parc actif pour chaque formule tarifaire " \
-        "XARRE. reporting_xarre_offer_nrt donne le parc, le ca et le volume des souscriptions aux offres XARRE par type d'offres, par offre, par " \
-        "segment, par tranches d'heure de souscriptions (ex : 00h-01h, 13h-14h, etc). Donnez en sortie les tables les plus pertinantes pour répondre à la question :"f" {requete}." \
+        "XARRE par segment et commune. reporting_xarre_offer_nrt donne le parc, le ca et le volume des souscriptions aux offres XARRE par type d'offres, par offre, par " \
+        "segment, par tranches d'heure de souscriptions (ex : 00h-01h, 13h-14h, etc). Donnez en sortie les tables les plus pertinantes (1 OU 2, etc) pour répondre à la question :"f" {requete}." \
+        "Notez qu'aussi les tables monthly fournissent le segment (segment recharge et marché) d'appartenance de chaque client excepté la table monthly_sortants qui ne donne pas cette information. " \
+        "Les tables daily ne fournissent pas les segments d'appartenance des clients excepté dail_localisation_5g. Les tables reporting " \
+        "présentent au moins l'information sur le segment marché ou bien les deux segments à la fois (segment recharge et marché), de meme quelques informations géographiques des données. " \
+        "Les tables monthly contiennent certaines informations géographiques des clients comme la commune, région, etc. Privilégiez toujours les tables monthly, elles contiennnent plus d'informations. " \
+        "Autrement dit, faites la recherche en premier lieu sur les tables monthly, si vous ne trouvez pas la réponses sur les monthly, vous allez sur les tables daily et reporting. " \
+        "Sachez qu'aussi les tables daily_clients, daily_clients_digitaux, daily_infos_bts, daily_infos_otarie, montthly_clients et monthly_sortant contiennent aussi des informations " \
+        "sur les zones de distributions que l'on appelle zone_drv et zone_dvri. Pour les questions sur les communes, les segments marche ou recharges, " \
+        "les formules tarifaires, ne choississez pas les tables daily car elles ne sont pas adaptées, utilisez plutot les monthly. " \
         \
         "Sur les souscriptions des offres, Notez que nous avons des catégories ou types d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, NC) avec leur " \
         "formule tarifaire ou commerciale (JAMONO NEW S'COOL, JAMONO ALLO, JAMONO PRO, JAMONO MAX, AUTRES) et leurs segments recharges (Mass-Market, High, Middle, S0, super high) " \
@@ -978,18 +1016,12 @@ def Agent_analyst_RAG_1(requete) :
         \
         "Evitez les erreurs sur les noms de tables que vous fournissez en sortie, cela repercutera négativement sur l'exécution " \
         "de la requete qui sera produite. Réponds uniquement avec les informations issues des documents fournits sans inventer ou modifier un nom de " \
-        "table. " \
+        "table. Evitez aussi de mélanger le nom des tables par exemple monthly_souscription et daily_souscription, daily_clients et monthly_clients, etc." \
         "Voici un exemple de sortie : " \
-        "{" \
-        "   'daily_parc_maxit' : 'C’est une table journalière qui fournit les informations sur les clients ou le parc clients qui ont eu à faire  \
-                                une activité sur l’application mobile MAXIT. Elle contient les données d’usage de l’application MAXIT pour \
-                                chaque abonné avec des informations sur la fréquence, la récence et la périodicité de l’utilisation. Chaque \
-                                ligne correspond à un MSISDN (identifiant unique d’un abonné) et inclut la date de dernière activité (last_active_date) \
-                                ainsi que le nombre de jours distincts d’activité (nb_j_distinct). Les colonnes year, month et day précisent la période \
-                                d’utilisation de l’application. Elle permet d’identifier les clients actifs ou inactifs de l’application mobile MAXIT ou \
-                                en déclin d’usage, de segmenter les utilisateurs MAXIT selon la fréquence d’usage (nb_j_distinct) et la récence \
-                                (last_active_date). Elle est conçue pour analyser l’engagement des clients sur l’application mobile MAXIT' " \
-        "}" \
+        \
+        f"```json \
+        {json.dumps(exemple_sortie, indent=2, ensure_ascii=False)} \
+        ```" \
         
 
     result = qa_chain(query)
@@ -1906,40 +1938,41 @@ def analyse_recommand_gemini(api_key = api_k, request=None, nb_imgD=1,nb_imgKPI=
 
 
 def Agent_analyst_RAG_Gemini(requete):
+    ####################################
+    #        Google
+    api = "AIzaSyDHkznzWQS7g0t-jfaJ4RHKflgPKbGNLBw"
 
-    # 1. Créer les documents (comme dans ton code)
-    #documents = [
-    #    Document(
-    #        page_content=f"Table : {key}\nDescription : {value}\nCaractéristiques : {data[key]} \n\n"
-    #    )
-    #    for key, value in tab.items()
-    #]
+    ###################################
+    #        Mixtral
+    #api = "4ZGCRy6uvJPyAceCsnwZTOsk5LnJ9x41"
 
-    # 2. Découper en chunks
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
-    docs = text_splitter.split_documents(documents)
+    # embedding de google
+    #embedding_model = "text-embedding-004" "models/text-embedding-001" "gemini-embedding-001" "models/embedding-001"
+    #embeddings = genai.embed_content(model=embedding_model,content=docs)
 
-    # 3. Créer les embeddings avec Gemini
-    # Assure-toi que ta clé est bien définie :
-    # setx GOOGLE_API_KEY "ta_clé_API"
-    #if not os.getenv("GOOGLE_API_KEY"):
-    #    raise ValueError("La variable d'environnement GOOGLE_API_KEY n'est pas définie")
+    #problème d'event loop
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        asyncio.set_event_loop(asyncio.new_event_loop())
 
-    #embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+    #embeddings = GoogleGenerativeAIEmbeddings(model="text-embedding-004", google_api_key = api_k)
+    print("Gass OK")
+
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-    #embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001",
-    #                                          google_api_key = os.environ['GOOGLE_API_KEY'])
-    #embeddings.embed_query()
-    # Construire la base vectorielle
+    # la base vectorielle
     db = FAISS.from_documents(docs, embeddings)
 
     # Récupérateur
     retriever = db.as_retriever()
 
+    # model= "mistral-large-latest",    , "mistral-small", "mistral-tiny"  "mistral-medium"
+
     # Chaîne RAG avec Gemini comme LLM
     qa_chain = RetrievalQA.from_chain_type(
-        llm=ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0, google_api_key = api_k),
+        llm=ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0, google_api_key = api),
+        #llm = ChatMistralAI(model = "mistral-medium", api_key= api, temperature= 0),
         retriever=retriever,
         return_source_documents=True
     )
@@ -1952,7 +1985,18 @@ def Agent_analyst_RAG_Gemini(requete):
                                 ainsi que le nombre de jours distincts d’activité (nb_j_distinct). Les colonnes year, month et day précisent la période \
                                 d’utilisation de l’application. Elle permet d’identifier les clients actifs ou inactifs de l’application mobile MAXIT ou \
                                 en déclin d’usage, de segmenter les utilisateurs MAXIT selon la fréquence d’usage (nb_j_distinct) et la récence \
-                                (last_active_date). Elle est conçue pour analyser l’engagement des clients sur l’application mobile MAXIT."
+                                (last_active_date). Elle est conçue pour analyser l’engagement des clients sur l’application mobile MAXIT." ,
+        "monthly_maxit" : "C'est une table mensuelle qui regroupe les données d'interactions des clients avec les différents services de l'application \
+                            Maxit. Autrement dit, elle contient les traces d’usage de l’application MAXIT, une application selfcare utilisée par les abonnés \
+                            pour gérer leur ligne mobile (consultation de solde, recharges, transferts d'argent, souscription à des offres, etc.). Chaque \
+                            ligne de la table représente une action ou une tentative d’action effectuée par un utilisateur identifié par son MSISDN avec le \
+                            nom du service concerné dans la colonne service. Le status indique le résultat de l'opération. La colonne extra_source précise la \
+                            source ou le canal utilisé tandis que amount représente le montant associé à l’opération et nb_events le nombre d’événements générés. \
+                            ca_cr_commune identifie la commune où l’opération a été effectuée. Les informations de segmentation marketing sont fournies par \
+                            SEGMENT_RECHARGE et segment_marche permettant de catégoriser les clients selon leur profil de consommation. formule_dmgp correspond \
+                            au formule tarifaire souscrite. Enfin year et month situent l’événement dans le temps. Cette table permet le suivi de l’usage des \
+                            services (fonctionnalités populaires, volume d’utilisation, etc), analyse de performance (succès ou échec des transactions) et de \
+                            l’activité des clients, etc."
     }
     
     # Tester une question
@@ -1994,10 +2038,11 @@ def Agent_analyst_RAG_Gemini(requete):
         Si la réponse est dans 2 ou plusieurs tables, Vous donnerez tout les tables concernées \
         pour répondre à la question. Analysez la question pour voir, est ce que vous devez de faire une requete \
         simple , d'aggrégation, de jointure ou combiné. Notez que 'OM' signifie 'Orange Money'. Ne donne jamais un " \
-        "nom de table qui n'existe pas dans le catalogue de données fournies dans le RAG. " \
+        "nom de table qui n'existe pas dans le catalogue de données fournies dans le RAG. Parfois la réponse à la question peut nécessiter de " \
+        "faire une jointure entre plusieurs tables, dans ce cas, donnez en retour tout les tables nécessaires à la question" \
         "Notez que la jointure entre les tables peut etre fait entre des colonnes qui ne représente pas l'identifiant " \
         "des clients. Faites bien la différence entre les tables parc, de l'application Maxit, de souscriptions des offres, du trafic réseau (2G/3G/4G/5G) ou de " \
-        "consommation de donnée (data) mobile, du programme de fidélité Sargal, de voix, recharges ou chiffre d'affaires (ca), pour les trafic à " \
+        "consommation de donnée (data) mobile, du programme de fidélité Sargal, de voix, CA recharges ou chiffre d'affaires (ca), pour les trafic à " \
         "l'international (ca, durée, parc, etc à l'international), etc. Analyse bien la question posée avant de " \
         "donner la ou les tables de sortie. Si vous voyez une question qui parle de paiement (par exemple paiement senelec, sen'eau, " \
         "etc) consultez la table 'daily_maxit' qui contient les infos quotidiennes sur les services de l'application maxit avec sa colonne 'service'." \
@@ -2025,24 +2070,30 @@ def Agent_analyst_RAG_Gemini(requete):
         "donne le suivi de la consommation 4G des Heavy user. daily_infos_bts donne les informations détaillées sur les sites physiques et leurs " \
         "cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent " \
         "le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les " \
-        "volumes de données consommées pour chaque réseau en MégaOctets (Mo). daily_localisation_5g fournit les " \
-        "infos géographiques des clients et leurs segments et site ou cellule d'appartenance. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
-        "MAXIT avec le service utilisé tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services et parcs de l'application mobile Maxit." \
+        "volumes de données consommées pour chaque réseau en MégaOctets (Mo).monthly_terminaux contiennent aussi les infos sur la commune, segment marche et le formule tarifaire. daily_localisation_5g fournit les " \
+        "infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
+        "MAXIT avec le service utilisé tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services et parcs de l'application mobile Maxit. " \
+        "monthly_maxit, reporting_daily_maxit, reporting_monthly_maxit et reporting_daily_parc_maxit contiennent aussi les infos sur les communes, les segments et les formules tarifaires." \
         "daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, " \
         "daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation " \
         "(last_active_date) ainsi que la fréquence (nb_j_distinct) pour les recharges, les pass, d'utilisation maxit, d'achat illimix et illiflex et data " \
         " du trafic le réseau 4G, de data trafiqué le réseau global et de partciper au programme Sargal. daily_recharges, monthly_recharges et reporting_ca_monthly donne les " \
         "chiffres d'affaires total (ca_recharge) ou générés pour tout les recharges (ca_recharges) sur les différents canaux ainsi que par canal (par OM " \
         "(ca_pass_glob_om_jour, ca_credit_om), par Wave (ca_wave), par Seddo(ca_seddo), par cartes (ca_cartes), à l'international (ca_iah), " \
-        "et par self_top_up).monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
-        "reporting_sargal_gift_monthly et reporting_sargal_inscrits donne les infos sur la participation du programme de fidélité Sargal. " \
+        "et par self_top_up).monthly_recharges et reporting_ca_monthly contiennent aussi les infos sur les communes, les segments et les formules tarifaires. monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
+        "reporting_sargal_gift_monthly et reporting_sargal_inscrits donne les infos sur la participation du programme de fidélité Sargal. monthly_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
+        "reporting_sargal_gift_monthly et reporting_sargal_inscrits contiennent aussi les infos sur la localisation, les segments et les formules tarifaires. " \
         "monthly_souscription et daily_souscription fournissent des informations ou le CA des souscriptions (ca_data et ca_voix) des catégories ou type d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, etc) et " \
-        "et de l'offre souscrite (ILLIMIX JOUR 500F, PASS 2.5GO,MIXEL 690F, illiflex mois, etc) et permettent aussi de déterminer les clients qui utilisent du data ou voix ou les deux à la fois. reporting_ca_data_monthly fait le reporting du Chiffre d'affaire data (ca_data) mensuelle. reporting_daily_offer, " \
+        "et de l'offre souscrite (ILLIMIX JOUR 500F, PASS 2.5GO,MIXEL 690F, illiflex mois, etc) et permettent aussi de déterminer les clients qui utilisent du data ou voix ou les deux à la fois. monthly_souscription contient aussi les " \
+        "infos sur la localisation, les segments et les formules tarifaires mais pas daily_souscription. Le nom complet des offres est enrégistré dans la table daily_souscription mais pas dans monthly_souscription.Autrement dit, " \
+        "Ce dernier contient uniquement le type de l'offre mais pas le nom complet de l'offre. reporting_ca_data_monthly fait le " \
+        "reporting du Chiffre d'affaire data (ca_data) mensuelle des communes, des segments et des formules tarifaires. reporting_daily_offer, " \
         "reporting_offer_monthly et reporting_souscription_monthly font le le reporting sur les souscriptions des offres (sous_mnt,ca_data, ca_voix, ca_sous_HT) suivant le " \
-        "types de souscription et le type d'offre souscrit. reporting_monthly_terminaux fait le reporting des Data_user ou No Data_user avec la colonne data_status " \
+        "types de souscription, le type d'offre souscrit, la commune, les segments, les formules tarifaires. reporting_monthly_terminaux fait le reporting des Data_user ou No Data_user suivant les communes, segments et formules tarifaires avec la colonne data_status " \
         "et leur utilisation de smartphone ou pas. daily_sva, monthly_sva et reporting_monthly_sva donne le montant de la souscription et le parc des " \
-        "services à valeur ajouté.daily_voix, monthly_voix et reporting_monthly_voix fournissent le volume ou la durée des appels sortants des abonnées " \
-        "sur les différents opérateurs téléphoniques (Orange, Free, Expresso, ProMobile, etc) ainsi leurs parcs clients correspondant. reporting_5g_daily regroupe les sites techniques " \
+        "services à valeur ajouté.monthly_sva et reporting_monthly_sva ajoutent les segments et communes d'appartenance de meme que le formule tarifaire utilisé. " \
+        "daily_voix, monthly_voix et reporting_monthly_voix fournissent le volume ou la durée des appels sortants des abonnées " \
+        "sur les différents opérateurs téléphoniques (Orange, Free, Expresso, ProMobile, etc) ainsi leurs parcs clients correspondant. monthly_voix et reporting_monthly_voix ajoutent les segments et communes d'appartenance de meme que le formule tarifaire utilisé. reporting_5g_daily regroupe les sites techniques " \
         "avec une série de KPI quotidiens (Key Performance Indicators) et leur volumes de données consommées liés à l’usage du réseau 5G. reporting_daily_parc fait le reporting quotidienne " \
         "du comportement (actifs ou inactifs) ou parc des abonnées sur les 90 derniers jours. reporting_daily_ca_pag_xarre, " \
         "reporting_daily_data_xarre, reporting_daily_trafic_xarre et reporting_recharge_daily_xarre " \
@@ -2050,36 +2101,41 @@ def Agent_analyst_RAG_Gemini(requete):
         "le trafic Internet et le parc d’abonnés par technologie réseau (2G, 3G, 4G, 5G) ventilées par formule commerciale XARRE, le volume " \
         "de trafic sortant et les parcs d’utilisateurs par type de réseau et d’opérateur (Orange, Expresso, Free, ProMobile, etc) sur les " \
         "offres XARRE, le chiffre d'affaires généré par les recharges des offres XARRE ainsi que du parc actif pour chaque formule tarifaire " \
-        "XARRE. reporting_xarre_offer_nrt donne le parc, le ca et le volume des souscriptions aux offres XARRE par type d'offres, par offre, par " \
-        "segment, par tranches d'heure de souscriptions (ex : 00h-01h, 13h-14h, etc). Donnez en sortie les tables les plus pertinantes pour répondre à la question :"f" {requete}." \
+        "XARRE par segment et commune. reporting_xarre_offer_nrt donne le parc, le ca et le volume des souscriptions aux offres XARRE par type d'offres, par offre, par " \
+        "segment, par tranches d'heure de souscriptions (ex : 00h-01h, 13h-14h, etc). Donnez en sortie les tables les plus pertinantes (1 OU 2, etc) pour répondre à la question :"f" {requete}." \
         "Notez qu'aussi les tables monthly fournissent le segment (segment recharge et marché) d'appartenance de chaque client excepté la table monthly_sortants qui ne donne pas cette information. " \
         "Les tables daily ne fournissent pas les segments d'appartenance des clients excepté dail_localisation_5g. Les tables reporting " \
         "présentent au moins l'information sur le segment marché ou bien les deux segments à la fois (segment recharge et marché), de meme quelques informations géographiques des données. " \
-        "Les tables monthly contiennent certaines informations géographiques des clients comme la commune, la région, etc. Privilégiez toujours les tables monthly, elles contiennnent plus d'informations. " \
-        "Sachez qu'aussi les tables daily_clients, daily_clients_digitaux, daily_infos_bts, daily_infos_otarie, montthly_clients et monthly_sortant contiennent aussi des informations sur les zones de distributions que l'on appelle zone_drv et zone_dvri." \
+        "Les tables monthly contiennent certaines informations géographiques des clients comme la commune, région, etc. Privilégiez toujours les tables monthly, elles contiennnent plus d'informations. " \
+        "Autrement dit, faites la recherche en premier lieu sur les tables monthly, si vous ne trouvez pas la réponses sur les monthly, vous allez sur les tables daily et reporting. " \
+        "Sachez qu'aussi les tables daily_clients, daily_clients_digitaux, daily_infos_bts, daily_infos_otarie, montthly_clients et monthly_sortant contiennent aussi des informations " \
+        "sur les zones de distributions que l'on appelle zone_drv et zone_dvri. Pour les questions sur les communes, les segments marche ou recharges, " \
+        "les formules tarifaires, ne choississez pas les tables daily car elles ne sont pas adaptées, utilisez plutot les monthly. " \
         \
         "Sur les souscriptions des offres, Notez que nous avons des catégories ou types d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, NC) avec leur " \
         "formule tarifaire ou commerciale (JAMONO NEW S'COOL, JAMONO ALLO, JAMONO PRO, JAMONO MAX, AUTRES) et leurs segments recharges (Mass-Market, High, Middle, S0, super high) " \
         "et marché (JEUNES, ENTRANT, KIRENE AVEC ORANGE, AUTRES,MILIEU DE MARCHE,HAUT DE MARCHE, TRES HAUT DE MARCHE ) correspondant. Chaque type ou catégorie d'offres contient " \
-        "plusieurs offres de souscriptions et formule et catégorie d'offres sont différentes. Notez qu'aussi les offres data font références aux offres de type PASS INTERNET." \
+        "plusieurs offres de souscriptions, et formule et catégorie d'offres sont différentes. Notez qu'aussi les offres data font références aux offres de type PASS INTERNET." \
         \
-        "Si vous recevez une question sur le chiffre d'affaire tout court (par exemple : Donne moi le Ca de 2025, quel est l'évolution du CA par segment, etc) sans que l'utilisateur précise le chiffre " \
-        "d'affaire, sachez que l'utilisateur veut simplement le chiffre d'affaire total qui n'est rien d'autre que le chiffre d'affaire des recharges " \
+        "Si vous recevez une question sur le chiffre d'affaire tout court (Donne moi le Ca, quel est l'évolution du CA,quel est le ca par segment, etc) sans que l'utilisateur précise le chiffre " \
+        "d'affaire de quoi, sachez que l'utilisateur veut simplement le chiffre d'affaire total qui n'est rien d'autre que le chiffre d'affaire des recharges " \
         "(ca recharges). Le chiffre d'affaire seulement fait référence au chiffres d'affaires des recharges(ca_recharges) ou CA total. Pour les questions " \
         "sur la segmentation, ne choisissez jamais les tables de reporting car elle ne sont pas adapté, utilise plutot les tables monthly (mensuelles) " \
-        "ou daily (quotidiennes)" \
+        "ou daily (quotidiennes)." \
         \
         "Evitez les erreurs sur les noms de tables que vous fournissez en sortie, cela repercutera négativement sur l'exécution " \
         "de la requete qui sera produite. Réponds uniquement avec les informations issues des documents fournits sans inventer ou modifier un nom de " \
-        "table. " \
+        "table. Evitez aussi de mélanger le nom des tables par exemple monthly_souscription et daily_souscription, daily_clients et monthly_clients, etc." \
+        "N'oubliez pas CA ou chiffre d'affaire ou chiffre d'affaire total seulement sans précision est égal au CA des recharges." \
         "Voici un exemple de sortie : " \
         \
         f"```json \
         {json.dumps(exemple_sortie, indent=2, ensure_ascii=False)} \
-        ```" \
+        ``` " \
+        "Donnez en retour un fichier JSON valide et sérialisable et que la valeurs ou les valeurs des clés soit ou soient dans une ligne (pas de retour à la ligne)."
 
     result = qa_chain(query)
-    print("OK")
+    print("OKk")
 
     return result["result"]
 
@@ -2089,9 +2145,6 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
         #Document(page_content= dict_to_text(dataa[item]))
         Document(page_content=dict_to_text(item))
 
-        #Document(page_content= dataa[item])
-        #Document(page_content= str(dataa[item]))
-        #metadata={"table": item}
         for item in data_supp
         
     ]
@@ -2102,22 +2155,31 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
     docs = text_splitter.split_documents(document)
 
     #les embeddings et la base vectorielle
-    #embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     db = FAISS.from_documents(docs, embeddings)
+    
+    ###############################################       
+    ####      Google
+    key = "AIzaSyBxwZpwLsAl3YDWBfnsXd35djouNV3lX3E"
 
-    #C RAG
+    ##############################################
+    #        Mistral
+    #key = "b82WCxtVIqvPq9fK3iZPirxGLyO6Lt0L"
+    # model= "mistral-large-latest",  "mistral-small" "mistral-tiny"  "mistral-medium"
+
+    # RAG
     retriever = db.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
-        llm=ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0, google_api_key = api_k),
+        llm=ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0, google_api_key = key) ,
+        #llm = ChatMistralAI(model= "mistral-small", api_key= key, temperature= 0),
         retriever=retriever,
         return_source_documents=True
     )
 
-    #result_table = Agent_analyst_RAG()
     print(f"\n\n{result_table}\n\n")
 
-    query = "Vous étudiez les colonnes des différents tables fourni :"f"{result_table}.Vous allez regarder est ce qu'il  \
+    # + json.dumps(tables, ensure_ascii=False, indent=2)
+    query = f"""Vous étudiez les colonnes des différents tables fourni :{result_table}.Vous allez regarder est ce qu'il  \
         y a une colonne ou des colonnes qui sont dans le RAG (colonne : valeurs uniques ou présence  \
         du nom partiel de colonne : valeurs uniques).Le RAG contient des informations de plusieurs colonnes catégorielles.  \
         Autrement dit, vous avez des noms de colonnes avec leurs valeurs uniques (exemple : SEGMENT_RECHARGE : S0, Mass-Market, \
@@ -2125,7 +2187,7 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
         Pour les colonnes réprésentant les regions : TAMBACOUNDA, ZIGUINCHOR, DIOURBEL, DAKAR, THIES,SAINT LOUIS, etc) \
         Si après votre étude, vous trouvez une ou des colonnes dans le RAG,alors vous allez étudiez la \
         question pour voir la ou les valeurs unique(s) de la ou les colonnes qui permet(tent) de répondre à la \
-        question : "f"{requete}, puis vous allez récupérerer la ou les valeurs et les donnez en sortie pour que un autre agent l'utilise \
+        question : {requete}, puis vous allez récupérerer la ou les valeurs et les donnez en sortie pour que un autre agent l'utilise \
         sur sa production de requete SQL au niveau de la clause WHERE.Ce qui permettra à l'agent de produire une requete \
         avec un clause WHERE qui s'adapte avec les informations de la base de données.Par exemple, pour une question comme \
         'Quelle est le montant total des paiements SENELEC', pour \
@@ -2150,7 +2212,7 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
         ca_cr_commune_90 : 'DAKAR' pour une question sur la commune de Dakar sur les 90 derniers jours ,offer_name = [ 'PASS 2,5GO', 'ILLIMIX JOUR 500F', 'PASS 150 MO'], etc pour une question\
         les souscriptions aux offres 'PASS 2,5GO', 'ILLIMIX JOUR 500F', 'PASS 150 MO', etc] ou bien pas besoins d'informations \
         supplémentaires s'il n'en a pas. Si la question n'est pas spécifique à une valeur d'une variable, cela veut dire qu'on a \
-        besoin de tout les infos de la variables, dans ce cas ce n'est pas la peine de retourner des valeurs uniques de la variables"
+        besoin de tout les infos de la variables, dans ce cas ce n'est pas la peine de retourner des valeurs uniques de la variables."""
 
     result = qa_chain(query)
     data = f"{result_table}\n\n{result['result']}"
@@ -2160,16 +2222,45 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
     with open(path, "w", encoding="utf-8") as f:
         f.write(data)
 
-    print("OK")
+    print("OK Inf")
 
     #print("Réponse :", result["result"])
     #print("Source :", result["source_documents"][0])
     return result["result"]
 
-def Agent_SQL_Gem (requete, user_dir):
+def clean_json_text(text: str) -> str:
+    """
+    Nettoie un texte JSON mal formaté :
+    - Supprime les retours à la ligne inutiles à l'intérieur des valeurs de chaînes
+    - Échappe correctement les sauts de ligne
+    - Supprime les espaces indésirables avant/après les guillemets
+    """
+
+    # Supprimer les espaces avant/after les guillemets
+    text = re.sub(r'\s+"\s*', '"', text)
     
-    os.environ["GOOGLE_API_KEY"] = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
-    genai.configure(api_key = os.environ["GOOGLE_API_KEY"])
+    # Remplacer les retours à la ligne dans les chaînes par \n
+    text = re.sub(r'(?<!\\)\n', r'\\n', text)
+    
+    # Supprimer les espaces multiples
+    text = re.sub(r'\s{2,}', ' ', text)
+    
+    # Nettoyer les tabulations
+    text = text.replace('\t', ' ')
+    
+    return text.strip()
+
+
+def Agent_SQL_Gem (requete, user_dir):
+
+    ######################################## 
+    #       Google
+
+    key = "AIzaSyAE2xoS85v6DWEZLl4C3XrvAkVk1Uoee-k"
+    #key = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
+    os.environ["GOOGLE_API_KEY"] = key
+    #genai.configure(api_key = os.environ["GOOGLE_API_KEY"])
+    genai.configure(api_key = key)
     
     result_table = Agent_analyst_RAG_Gemini(requete)
 
@@ -2181,6 +2272,9 @@ def Agent_SQL_Gem (requete, user_dir):
         f.write(result_table)
     
     result_table = Extract_tables(path)
+
+    # Avec Mistral
+    #result_table = clean_json_text(result_table)
 
     data = json.loads(result_table) 
     list_tab = []
@@ -2202,8 +2296,13 @@ def Agent_SQL_Gem (requete, user_dir):
     print(info_sup)
 
 
-    # Sélectionner le modèle Gemini multimodal
-    model = genai.GenerativeModel("gemini-2.0-flash")
+    # ##########################################
+    #           Gemini
+    model = genai.GenerativeModel("gemini-2.5-flash")
+
+    ###########################################  
+    #            Mistral
+    #model = Mistral(api_key= os.environ["MIXTRAL_API_KEY"])
 
     prompt = f"Vous allez recupérer uniquement la ou les table(s) de données suivante(s): {result_table}, " \
             "et les informations supplémentaires (s'il y en a) :"f" {info_sup} " \
@@ -2247,7 +2346,7 @@ def Agent_SQL_Gem (requete, user_dir):
             "retourner les données de tout les années.Autrement dit, fait toujours un filtre de l'année en cours si l'année n'est " \
             "pas renseigné sur la question, utilise toujours des 'Alias' par exemple 'nom_table.nom_colonne' " \
             "pour éviter d'avoir des erreurs d'exécution provoqué par un nom de colonne.Notez que les colonnes avec comme nom 'day' représente les " \
-            "jours et ont pour format numérique (yyyymmdd).Gardez cela en mémoire, il vous servira pour les questions sur les données quotidiennes.A " \
+            "jours et ont pour format numérique (yyyymmdd par exemple 20250515).Gardez cela en mémoire, il vous servira pour les questions sur les données quotidiennes.A " \
             "Notez que 'Airtime' signifie recharge à partir de ton crédit.Par rapport au question de segmentation, " \
             "analyse bien la question pour donner en retour une réponse claire qui permet de définir bien les différents segments(ou clusters) demandés." \
             "Sur la requete qui sera produite, ne met jamais une limite à moins que la requete vous " \
@@ -2291,22 +2390,39 @@ def Agent_SQL_Gem (requete, user_dir):
             "(SELECT MAX(year) AS max_year FROM reporting_ca_data_monthly) AS T2 ON T1.year = T2.max_year GROUP BY " \
             "T1.year, T1.month ORDER BY T1.year DESC, T1.month DESC;" \
             \
-            "NB : N'oubliez pas de faire la filtre sur les années, si l'année n'est pas précisé sur la question ({requete}), faite un filtre " \
+            f"NB : N'oubliez pas de faire la filtre sur les années, si l'année n'est pas précisé sur la question ({requete}), faite un filtre " \
             "sur l'année en cours (par exemple year = YEAR(CURRENT_DATE())). Le YEAR(CURRENT_DATE())) est obligatoire si l'année n'est pas " \
             "spécifié sur la question. Si vous n'avez pas reçu de tables, n'invente pas de tables et ne " \
             "produit pas de requete, dites juste à l'utilisateur de reformuler sa question pour qu'il soit beaucoup plus clair.Utilisez que les " \
             "colonnes qui vous ont été fourni sur la ou les tables et n'essayez pas d'ajouter ou d'inventer une colonne meme si les informations " \
-            "de la ou des table(s) sont insuffisant",
+            "de la ou des table(s) sont insuffisant. Utilisez que les colonnes nécessaires qui permettent de répondre à la question sur la requete.",
 
+    ######################### Google  ##########################################
     response = model.generate_content(
-        contents= prompt
+        contents= prompt,
         #generation_config={"max_output_tokens": 600}
     )
+
+    ######################### Mixtral  #######################################
+    #response = model.chat.complete(
+    #                model= "mistral-large-latest",  # mistral-large-latest   , mistral-small  "mistral-medium"
+    #                #model="Mixtral-8×22B-v0.1",
+    #                messages=[{"role":"user","content": str(prompt)}],
+    #                temperature= 0
+    #                )
+
+    print("Good")
 
     path = f"{user_dir}.txt"
 
     with open(path, "w", encoding="utf-8") as f:
+        #########################################
+        #            google
         f.write(response.text)
+
+        #########################################
+        #            Mixtral
+        #f.write(response.choices[0].message.content)
     
     sql_query = Extract_sql(path)
 
@@ -2320,6 +2436,8 @@ def Agent_SQL_Gem (requete, user_dir):
 
 #### RAG + Crewai
 def SQL_Agent(requete, user_dir):
+
+    """
     
     ####### Recherche dans le RAG
     result_table = Agent_analyst_RAG_Gemini(requete)
@@ -2364,7 +2482,7 @@ def SQL_Agent(requete, user_dir):
     )
 
 
-
+    
     task_resquest_db = Task(
         name = "Tache SQL",
         agent = agent_sql,
@@ -2490,9 +2608,5 @@ def SQL_Agent(requete, user_dir):
         sql_query = None
 
     return sql_query
-
-
-
-
-
+    """
 
