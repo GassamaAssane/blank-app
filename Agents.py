@@ -12,6 +12,7 @@ import re
 from typing import Dict, List, Any, Optional
 from itertools import combinations
 import random
+import plotly.io as pio
 from pathlib import Path
 import base64
 import os
@@ -24,9 +25,12 @@ import json
 import pandas as pd
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_mistralai import ChatMistralAI
-from langchain.callbacks import get_openai_callback
+from langchain_groq import ChatGroq
+#from langchain.callbacks import get_openai_callback
+from langchain_community.callbacks.manager import get_openai_callback
 #from langchain_community.callbacks import get_openai_callback
-from langchain.vectorstores import FAISS
+#from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 #from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
@@ -38,14 +42,19 @@ from langchain.docstore.document import Document
 import os
 
 
-
-openai_key = "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"
+################################# 
+#       OPENAI API KEY
+openai_key = "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"
 #openai_key = "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"
 
+################################# 
+#       Mistral API KEY
 mixtral_key = "bnccjKG64aj9lgVqC1KzNe1tqnK1eZfm"
 
 # Systeme d'Agent
-new_api = "AIzaSyD9ZstqQTUvpjTPN1wLUP_k4eW3tSdJq9o"
+################################# 
+#       Google API KEY
+new_api = "AIzaSyDBwRxvMEThZXphJuvG9ZBDzQsQIjskoFU"
 api_k = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
 
 """
@@ -578,8 +587,18 @@ def Agent_analyse_recommand(openai_key = openai_key, request = None, nb_img = 1,
     return responses, cost, usage
  
 
-def combine_images_grid(image_paths, output_path="Image/dash.png", images_per_row=3, padding=10, background_color=(255, 255, 255)):
-    images = [Image.open(p) for p in image_paths]
+def combine_images_grid(html_paths, output_path="Image/dash.png", images_per_row=2, padding=10, background_color=(255, 255, 255)):
+    # === 1. Conversion HTML → PNG ===
+    #temp_images = []
+    #for html_file in html_paths:
+    #    fig = pio.read_html(html_file)  # Charger la figure Plotly
+    #    temp_png = html_file.replace(".html", ".png")
+        
+    #    pio.write_image(fig, temp_png, scale=2)  # Export PNG haute résolution
+    #    temp_images.append(temp_png)
+
+    #images = [Image.open(p) for p in temp_images]
+    images = [Image.open(p) for p in html_paths]
     
     # Redimensionner les images à la même taille (optionnel mais recommandé)
     widths, heights = zip(*(img.size for img in images))
@@ -804,8 +823,8 @@ def Agent_analyst_RAG(requete) :
         "cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent " \
         "le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les " \
         "volumes de données consommées pour chaque réseau en MégaOctets (Mo). daily_localisation_5g fournit les " \
-        "infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
-        "MAXIT tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services de l'application mobile Maxit." \
+        "infos géographiques des clients. daily_maxit et monthly_maxit donnent les infos des clients qui se sont connectés sur l'application mobile pour faire un transfert d'argent, retrait, consulter de solde, Achat d'offres, paiement de facture, etc " \
+        "MAXIT tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services ou fonctions de l'application mobile Maxit." \
         "daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, " \
         "daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation " \
         "(last_active_date) ainsi que la fréquence (nb_j_distinct) pour les recharges, les pass, d'utilisation maxit, d'achat illimix et illiflex et data " \
@@ -1502,7 +1521,7 @@ def Agent_SQL(requete, user_dir) :
     return sql_query, cost
     #return sql_query
 
-def Agent_RAG_KPI(echantillon, requete) :
+def Agent_RAG_KPI(echantillon, requete, user) :
     document = [
         #Document(page_content= dict_to_text(dataa[item]))
         Document(page_content=dict_to_text(item))
@@ -1523,7 +1542,7 @@ def Agent_RAG_KPI(echantillon, requete) :
     #RAG
     retriever = db.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
-        llm=ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0, google_api_key = api_k),
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0, google_api_key = new_api),
         #gpt-4o-mini
         #llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0),
         retriever=retriever,
@@ -1538,15 +1557,33 @@ def Agent_RAG_KPI(echantillon, requete) :
         Notez que sur le RAG, vous avez les familles de KPI(Revenu, Parc, trafic,etc), les KPI primaires(Ca recharge, Ca data, Ca souscrition, 
         Parc, Trafic,etc), les KPI recommandés (Entrants, sortants, NA (nouveaux abonnés) Ca data, Ca bundles, Ca pass, Ca illiflex, Ca par région, Ca par marché,
         etc), les raisons d'utilisations des KPI.Pour chaque KPI primaire, il y a un KPI recommandé pour calculer sa performance.Notez que le 
-        parc est le nombre de clients abonnés ou actifs. Le Ca est le chiffre d'affaire ou revenu généré par les clients.Pour les questions sur 
-        le parc ou nombre d'abonnés ou de clients, etc utilisez les KPI liés au Parc, pour les questions de Ca, c'est les KPI liés au revenu et 
-        pour les questions de voix ou de data, le KPI lié au Trafic est recommandé. Mais parfois vous pouvez avoir des questions qui peuvent 
+        parc est le nombre de clients abonnés ou actifs. Le Ca est le chiffre d'affaire ou revenu généré par les clients.Pour les données (ou échantillon) sur 
+        le parc ou nombre d'abonnés ou de clients, etc utilisez les KPI liés au Parc, pour les données (ou échantillon) sur le Ca, c'est les KPI liés au revenu et 
+        pour les données (ou échantillon) sur les voix ou data, le KPI lié au Trafic est recommandé. Mais parfois vous pouvez avoir des données (ou échantillon) qui peuvent 
         liées à la fois des Revenus et des Parc, des Parc et des Trafic,etc. Donnez
         une sortie très claire et très structurée des différentes KPI que vous trouverez à la fin de votre recherche afin de permettre de 
         faire au futur une analyse claire et exploitable par les décideurs. Mettez un format de sortie avec une petite explication globale 
         des différents KPI trouvé et après pour chaque KPI, vous donnez une explication très claire par rapport à la question métier qui a  
-        été posé et au résultat de son échantillon(par exemple, une explication global des KPI après tu va à la ligne vous mettez 
-        KPI : explication et raison).
+        été posé au départ et au résultat de son échantillon(par exemple, une explication global des KPI après tu va à la ligne vous mettez 
+        KPI : explication et raison (son influence sur l'échantillon de données)). Notez que le CA des recharges veut dire la meme chose que 
+        le CA total.
+
+        Voici un exemple de sortie pour une question sur le CA des recharges ou CA total :
+
+        **KPIs Recommandés :**
+
+        *   **KPI 1 : CA Data**
+
+            *   **Explication :** Le CA Data représente le chiffre d'affaires généré par la vente de forfaits de données ou par la consommation de données des abonnés.
+            *   **Pertinence :** Une variation du CA total peut être due à une variation du CA Data. Analyser le CA Data permet de comprendre si l'évolution du chiffre d'affaires global est liée à la consommation de données.
+            *   **Adaptation au contexte :** Calculer le CA Data avec les mêmes dimensions que le CA total permet de comparer les évolutions et d'identifier une corrélation.
+
+        *   **KPI 2 : CA par marche**
+
+            *   **Explication :** Le CA par marche représente le chiffre d'affaires généré pour chaque marché.
+            *   **Pertinence :** Une variation du CA total peut être due à une variation du CA d'un marché. Analyser le CA par marche permet de comprendre si l'évolution du chiffre d'affaires global est liée à un marché ou pas.
+            *   **Adaptation au contexte :** Calculer le CA par marche avec les mêmes dimensions que le CA total permet de comparer les évolutions et d'identifier une corrélation.
+
         """
     
     result = qa_chain(query)
@@ -1560,8 +1597,8 @@ def Agent_RAG_KPI(echantillon, requete) :
         print(f"Cout (USD) : {cb.total_cost}")
     """
 
-
-    with open("infoKPI.txt", "w", encoding="utf-8") as f:
+    path = f"{user}_infoKPI.txt"
+    with open(path, "w", encoding="utf-8") as f:
         f.write(result['result'])
     
     #return result['result'], cb.total_cost
@@ -1579,7 +1616,7 @@ def Agent_tables_KPI(requete, echantillon, info_kpi) :
     #Créer la chaîne RAG
     retriever = db.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
-        llm=ChatGoogleGenerativeAI(model="models/gemini-2.0-flash", temperature=0, google_api_key = api_k),
+        llm=ChatGoogleGenerativeAI(model="models/gemini-2.5-flash", temperature=0, google_api_key = api_k),
         # gpt-4o-min
         #llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0),
         retriever=retriever,
@@ -1599,19 +1636,89 @@ def Agent_tables_KPI(requete, echantillon, info_kpi) :
 
     query = f"""
         Vous un Expert Analyste base de données et recherches documentaire.Votre but est de faire une recherche sur les caractéristiques d'une  \
-        base de donnée pour trouver les tables qui permettent de calculer les KPI de certains données de base.En résumé,vous etes un expert en analyse de données avec plus de 25 ans d'expérience \
+        base de donnée pour trouver les tables qui permettent de calculer les KPI de certains données de la base.En résumé,vous etes un expert en analyse de données avec plus de 25 ans d'expérience \
         et expert en gouvernance de données : tu documentes des bases de données métier (RAG) pour que les équipes comme le BI comprennent les \
         indicateurs de performance d'une partie des données de la base pour tirer des informations précises.Maintenant voici la question qui a 
         été posée, un échantillon de son résultat et les informations sur les KPI pertinentes pour cette question et sa réponse: \n Question : 
         {requete}, \n Echantillon du résultat : {echantillon}, \n Information sur les KPI : {info_kpi}\n.Alors votre misson est d'étudier et d'analyser  
         ses informations pour me donner en retour les tables qui permettent de mesurer les kpi du résultat de la question qui a été posée au 
-        depart.Ses KPI nous permettrons de savoir 'le pourquoi' de l'évolution(augmentation ou baisse) des données.Donne moi en sortie 
+        depart.Ses KPI nous permettrons de savoir 'le pourquoi' de l'évolution (augmentation ou baisse) des données.Donne moi en sortie 
         le(s) nom(s) de la ou des table(s) et leurs descriptions sous la forme d'un document JSON avec le nom ou les nom(s) de la ou le(s) 
         tables comme clé et leurs descriptions comme valeurs. \
-        Les informations du RAG vous donnent le nom des tables, leurs descriptions et ses caractéristiques,pour chaque tables, vous avez le 
+        Pour les KPI sur les communes (département ou région), les segments marche ou recharges, \
+        les formules tarifaires, ne choississez pas les tables daily car elles ne sont pas adaptées, utilisez plutot les monthly.
+        Les informations du RAG vous donnent le nom des tables, leurs descriptions et ses caractéristiques, pour chaque tables, vous avez le 
         nom des colonnes et la descrition de chaque colonne, de meme qu'aussi pour chaque colonne vous avez son type, quelques exemples de 
         valeurs de la colonne, le sens ou le contexte ou l'utilité de la colonne par rapport aux données. \
-        Notez que les tables journalières sont mis à jour quotidiennement et les mensuelles mensuellement. Voici un exemple de sortie : \
+        Notez que les tables journalières sont mis à jour quotidiennement et les mensuelles mensuellement. 
+        
+        NB : Notez que la table daily_oss_5g contiennent les informations sur les cellules et leurs trafics (nom cellule, trafic moyen des utilisateurs, etc). daily_clients et \
+        monthly_clients contiennent les informations quotidiennes et mensuelles pour chaque client (identifiant, infos géographiques et démographiques, \
+        segment d'appartenance,etc.). daily_clients_digitaux donne les infos des clients qui utilisent les \
+        plateformes digitaux.daily_conso fournit le montant des consommations des appels (ou voix) internationaux de chaque client \
+        (ca_voix_international).monthly_international et reporting_monthly_international donnent le montant ou CA des consommations 
+        des communications internationaux pour les forfaits appelé ca_pass, pour les usages hors forfait appelé ca_payg et \
+        leur durée totale(duration_mn_payg, duration_mn_pass) et leur parc (parc_pass, parc_payg, parc_international). Autrement 
+        dit, les deux tables donnent le CA payg et CA pass, durée des pass et des payg, le parc payg et pass, mais notez que \
+        c'est des infos sur les clients international. daily_data donne le volume de trafic de la consommation des données mobiles sur le réseau 2G, 3G, 4G et 5G en \
+        MégaOctets(Mo) tandisque monthly_data ajoute la commune et les segments (marché et recharges) d'appartenance et la formule tarifaire \
+        souscrite par le client.daily_delta_parc et reporting_parc_monthly donnent les infos sur la sortie et le parc des clients (sortant(0/1), reactive(0/1),parc(0/1),nouvelles \
+        arrivées(0/1), etc) alors que monthly_sortant ajoute la localité de référence du client (région, département, commune, zone_drv, \
+        nom_cellule, etc) tandisque daily_parc fournit les infos globlal du parc des clients (nombre d'entrant(entrant_cnt), de sortant (sortant_cnt) et de régularité (regularite), le parc (0/1), etc). \
+        daily_habit_5g_user donne la consommation Data mobile des Clients (volume_go) sur le réseau 5G par type d'application.daily_heavy_user_4g \
+        donne le suivi de la consommation 4G des Heavy user. daily_infos_bts donne les informations détaillées sur les sites physiques et leurs \
+        cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent \
+        le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les \
+        volumes de données consommées pour chaque réseau en MégaOctets (Mo).monthly_terminaux contiennent aussi les infos sur la commune, segment marche et le formule tarifaire. daily_localisation_5g fournit les \
+        infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile \
+        MAXIT avec le service utilisé tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services et parcs de l'application mobile Maxit. \
+        monthly_maxit, reporting_daily_maxit, reporting_monthly_maxit et reporting_daily_parc_maxit contiennent aussi les infos sur les communes, les segments et les formules tarifaires. \
+        daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, \
+        daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation \
+        (last_active_date) ainsi que la fréquence (nb_j_distinct) pour les recharges, les pass, d'utilisation maxit, d'achat illimix et illiflex et data \
+         du trafic le réseau 4G, de data trafiqué le réseau global et de partciper au programme Sargal. daily_recharges, monthly_recharges et reporting_ca_monthly donne les \
+        chiffres d'affaires total (ca_recharge) ou générés pour tout les recharges (ca_recharges) sur les différents canaux ainsi que par canal (par OM \
+        (ca_pass_glob_om_jour, ca_credit_om), par Wave (ca_wave), par Seddo(ca_seddo), par cartes (ca_cartes), à l'international (ca_iah), \
+        et par self_top_up).monthly_recharges et reporting_ca_monthly contiennent aussi les infos sur les communes, les segments et les 
+        formules tarifaires. monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, \
+        reporting_sargal_gift_monthly et reporting_sargal_inscrits donne les infos sur la participation du programme de 
+        fidélité Sargal. monthly_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, \
+        reporting_sargal_gift_monthly et reporting_sargal_inscrits contiennent aussi les infos sur la localisation, les segments et les formules tarifaires. \
+        monthly_souscription et daily_souscription fournissent des informations ou le CA des souscriptions (ca_data \
+        et ca_voix) des catégories ou type d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, etc) et \
+        et de l'offre souscrite (ILLIMIX JOUR 500F, PASS 2.5GO,MIXEL 690F, illiflex mois, etc) et permettent aussi de déterminer 
+        les clients qui utilisent du data ou voix ou les deux à la fois. monthly_souscription contient aussi les \
+        infos sur la localisation, les segments et les formules tarifaires mais pas daily_souscription. Le nom complet des 
+        offres est enrégistré dans la table daily_souscription mais pas dans monthly_souscription. Autrement dit, \
+        Ce dernier contient uniquement le type de l'offre mais pas le nom complet de l'offre. reporting_ca_data_monthly fait le \
+        reporting du Chiffre d'affaire data (ca_data) mensuelle des communes, des segments et des formules tarifaires. reporting_daily_offer, \
+        reporting_offer_monthly et reporting_souscription_monthly font le le reporting sur les souscriptions des offres (sous_mnt,ca_data, ca_voix, ca_sous_HT) suivant le \
+        types de souscription, le type d'offre souscrit, la commune, les segments, les formules tarifaires. reporting_monthly_terminaux fait le 
+        reporting des Data_user ou No Data_user suivant les communes, segments et formules tarifaires avec la colonne data_status \
+        et leur utilisation de smartphone ou pas. daily_sva, monthly_sva et reporting_monthly_sva donne le montant de la souscription et le parc des \
+        services à valeur ajouté (sva).monthly_sva et reporting_monthly_sva ajoutent les segments et communes d'appartenance de meme que le formule tarifaire utilisé. \
+        daily_voix, monthly_voix et reporting_monthly_voix fournissent le volume ou la durée des appels sortants des abonnées \
+        sur les différents opérateurs téléphoniques (Orange, Free, Expresso, ProMobile, etc) ainsi leurs parcs clients correspondant. 
+        monthly_voix et reporting_monthly_voix ajoutent les segments et communes d'appartenance de meme que le formule tarifaire utilisé. reporting_5g_daily regroupe les sites techniques \
+        avec une série de KPI quotidiens (Key Performance Indicators) et leur volumes de données consommées liés à l’usage du réseau 5G. reporting_daily_parc fait le reporting quotidienne \
+        du comportement (actifs ou inactifs) ou parc des abonnées sur les 90 derniers jours. reporting_daily_ca_pag_xarre, \
+        reporting_daily_data_xarre, reporting_daily_trafic_xarre et reporting_recharge_daily_xarre \
+        donnent le chiffres d'affaires généré des voix et SMS en mode PAYG (Pay-As-You-Go) pour les formules commerciales XARRE, \
+        le trafic Internet et le parc d’abonnés par technologie réseau (2G, 3G, 4G, 5G) ventilées par formule commerciale XARRE, le volume \
+        de trafic sortant et les parcs d’utilisateurs par type de réseau et d’opérateur (Orange, Expresso, Free, ProMobile, etc) sur les \
+        offres XARRE, le chiffre d'affaires généré par les recharges des offres XARRE ainsi que du parc actif pour chaque formule tarifaire \
+        XARRE par segment et commune. reporting_xarre_offer_nrt donne le parc, le ca et le volume des souscriptions aux offres XARRE par type d'offres, par offre, par \
+        segment, par tranches d'heure de souscriptions (ex : 00h-01h, 13h-14h, etc). Donnez en sortie les tables les plus pertinantes (1 OU 2, etc) pour qui contiennent les KPI suivantes: {info_kpi}. \
+        Notez qu'aussi les tables monthly fournissent le segment (segment recharge et marché) d'appartenance de chaque client excepté la table monthly_sortants qui ne donne pas cette information. \
+        Les tables daily ne fournissent pas les segments d'appartenance des clients excepté dail_localisation_5g. Les tables reporting \
+        présentent au moins l'information sur le segment marché ou bien les deux segments à la fois (segment recharge et marché), de meme quelques informations géographiques des données. \
+        Les tables monthly contiennent certaines informations géographiques des clients comme la commune, région, etc. Privilégiez toujours les tables monthly, elles contiennnent plus d'informations. \
+        Autrement dit, faites la recherche en premier lieu sur les tables monthly, si vous ne trouvez pas la réponses sur les monthly, vous allez sur les tables daily et reporting. \
+        Sachez qu'aussi les tables daily_clients, daily_clients_digitaux, daily_infos_bts, daily_infos_otarie, montthly_clients et monthly_sortant contiennent aussi des informations \
+        sur les zones de distributions que l'on appelle zone_drv et zone_dvri. Pour les infos ou KPI par rapport aux communes, les segments marche ou recharges, \
+        les formules tarifaires, ne choississez pas les tables daily car elles ne sont pas adaptées, utilisez plutot les monthly. \
+        
+        Voici un exemple de sortie : \
         
         ```json
         {json.dumps(exemple_sortie, indent=2, ensure_ascii=False)}
@@ -1676,7 +1783,7 @@ def Agent_KPI_req(echantillon, requete, requete_sql, user_dir) :
                     {
                         "type": "text",
                         "text": f"Vous allez recupérer uniquement la ou les table(s) de données fournie(s) pour les KPI: {tables_kpi}, " \
-                      f"pour produire une requete SQL valide qui permet de calculer les KPI avec les informations suivante {info_kpi} :" \
+                      f"pour produire une requete SQL valide qui permet de calculer les KPI avec les informations suivante {info_kpi}." \
                       #"Et aussi le nombre de clients (ou abonnées,etc) est différent au nombre de souscription"
                       " Analyse bien la ou les tables reçue(s) pour voir est ce que l'information des KPI est dans une ou plusieurs " \
                       "colonnes. Regarde bien aussi est-ce-que vous avez reçu une ou plusieurs table(s)." \
@@ -1759,9 +1866,9 @@ def Agent_KPI_req(echantillon, requete, requete_sql, user_dir) :
 
 def Agent_KPI_req_gemini(echantillon, requete, requete_sql, user_dir):
     # Configuration Gemini
-    genai.configure(api_key = api_k)
+    genai.configure(api_key = "AIzaSyAE7FiZkMS-vJmEOun1vkeNNIiSMYdmqUA")
 
-    info_kpi = Agent_RAG_KPI(echantillon, requete)
+    info_kpi = Agent_RAG_KPI(echantillon, requete, user_dir)
     print(info_kpi)
     #tables_kpi = Agent_tables_KPI(requete,echantillon,info_kpi)
     tables_kpi = Agent_tables_KPI(requete,echantillon,info_kpi)
@@ -1796,11 +1903,11 @@ def Agent_KPI_req_gemini(echantillon, requete, requete_sql, user_dir):
     #print(f"{tables_kpi} \n\n")
 
     # Sélectionner le modèle Gemini multimodal
-    model = genai.GenerativeModel("models/gemini-2.0-flash")
+    model = genai.GenerativeModel("models/gemini-2.5-flash")
 
     #Prompt
     prompt = f"""
-    Vous allez recupérer uniquement la ou les table(s) de données fournie(s) pour les KPI: {tables_kpi},  \
+    Vous allez recupérer uniquement la ou les table(s) de données suivant(s) fournie(s) pour les KPI: {tables_kpi},  \
     pour produire une requete SQL valide qui permet de calculer les KPI avec les informations suivante : {info_kpi} \
     
     Analyse bien la ou les tables reçue(s) pour voir est ce que l'information des KPI est dans une ou plusieurs \
@@ -1812,27 +1919,44 @@ def Agent_KPI_req_gemini(echantillon, requete, requete_sql, user_dir):
     entre les tables, c'est à dire les colonnes qui permet de faire la liaison entre les tables. \
     Après cela, produit une requete SQL correcte avec les colonnes qui contiennent l'information sur les différentes \
     tables reçues en faisant des jointures pour calculer les KPI de cette échantillon de donnée suivante issue du résultat de la \
-    question, '{requete}' : {echantillon}.Voici la requete qui a donné ses résultats : \n{requete_sql} \n.Référez vous de cette requete \
+    question, '{requete}' : {echantillon}.cette échantillon représente que les 5 premiers lignes des données.Voici la requete qui a donné le résultat de ses données : \n{requete_sql} \n.Référez vous de cette requete \
     pour produire une requete qui est dans la meme période, avec les memes informations, etc. Autrement dit, la requete qui sera produite \
-    doit avoir les memes conditions que celle donnée ci-dessus, et etre sur le meme période. Sélectionnez toujours les colonnes 'year' et 'month' sur la requete et utilisez les memes \
+    doit avoir les memes conditions sur la clause WHERE que cette requete \n{requete_sql} \n et etre sur le meme période \
+    (Les memes filtre : année, mois, catégories, etc).Ne vous basez pas sur l'échantillon pour faire le filtre de la requete 
+    mais plutot sur la requete qui a donné cet dataset.Sélectionnez toujours les colonnes 'year' et 'month' sur la requete et utilisez les memes \
     nom de colonne pour les alias (exemple : as year et as month). Sachez que le mois est toujours sous format numérique. \
     utilise toujours des 'Alias' par exemple 'nom_table.nom_colonne' \
     pour éviter d'avoir des erreurs d'exécution provoqué par un nom de colonne.Notez que les colonnes avec comme nom 'day' représente les \
     jours et ont pour format numérique (yyyymmdd).Gardez cela en mémoire, il vous servira pour les questions sur les données quotidiennes. \
     
-    La requete doit etre exécutée sous 'Hive'.Alors, produit en retour une requete SQL valide qui peut etre exécutée \
-    sur n'importe quelle version de HiveSQL sans erreur. N'utilise jamais une fonction obsolète dans la \
+    Si vous avez une KPI sur les regions ou départements et que la ou les table(s) fournis ne contient(ent) pas la colonne région \
+    ou département mais a les communes, prenez la table du nom de 'monthly_clients' qui donne les infos sur les clients avec les colonnes \
+    'region_monthly', 'departement_monthly', 'ca_cr_commune_monthly', etc pour faire la jointure avec la ou les table(s) fournis en input pour donner \
+    les informations sur les régions ou départements. \
+    
+    La requete doit etre exécutée sous 'MySQL'.Alors, produit en retour une requete SQL valide qui peut etre exécutée \
+    sur n'importe quelle version de MySQL sans erreur. N'utilise jamais une fonction obsolète dans la \
     requete. Ne met jamais de requete avec une sous requete sur la clause WHERE. \
     Par exemple,  WHERE year = (SELECT ....), Utilise plutot JOIN ON à place. \
+    Pour les KPI sur les communes (département ou région), les segments marche ou recharges,  \
+    les formules tarifaires, ne choississez pas les tables daily car elles ne sont pas adaptées, utilisez plutot les tables monthly. \
+    
+    Si vous avez des infos KPI sur les regions ou départements et que la ou les table(s) fournis ne contient(ent) pas la colonne région \
+    ou département mais a les communes, prenez la table du nom de 'monthly_clients' qui donne les infos sur les clients avec les colonnes \
+    'region_monthly', 'departement_monthly', 'ca_cr_commune_monthly', 'MSISDN', etc pour faire la jointure avec la ou les table(s) \
+    fournis en input pour donner les informations sur les régions ou départements.
     
     Sur la requete SQL, ordonnez toujours le résultat du plus récents au plus anciens ou du plus grand au plus petit. \
-    Analysez la question pour voir, est ce que vous devez de faire une requete simple,d'aggrégation,de jointure ou combiné .\
+    Analysez la question pour voir, est ce que vous devez de faire une requete simple,d'aggrégation,de jointure ou combiné. \
+    Pour les KPI sur les communes (département ou région), les segments marche ou recharges, \
+    les formules tarifaires, ne choississez pas les tables daily car elles ne sont pas adaptées, utilisez plutot les monthly. \
     
-    Produit en retour une requete SQL qui est claire, structurée, correcte et exécutable sous Hive, prenez uniquement 
+    Produit en retour une requete SQL qui est claire, structurée, correcte et exécutable sous MySQL.Ne produisez pas plusieurs requetes 
+    si vous avez plusieurs tables, faites une seule requete qui correcte et valide sous MySQL.Prenez uniquement \
 
     les colonnes qui contiennent l'information sur les KPI.Utilisez toujours des alias dans la requete et ajouter les colonnes year \
-    et month dans la sélection.La requete doit etre exécutée sous 'Hive'.Alors, produit en retour une \
-    requete SQL valide sous Hive. Voici quelques genres d'exemples de requete SQL pour la sortie : \
+    et month dans la sélection.La requete doit etre exécutée sous 'MySQL'.Alors, produit en retour une \
+    requete SQL valide sous MySQL. Voici quelques genres d'exemples de requete SQL pour la sortie : \
     SELECT rcm.year AS year, rcm.month AS month, rcm.ca_data AS chiffre_affaire FROM reporting_ca_monthly rcm WHERE rcm.year = YEAR(CURRENT_DATE())) \
     GROUP BY rcm.year, rcm.month ORDER BY rcm.year DESC,rcm.month DESC; \
     SELECT dp.year AS year,dp.month AS month,COUNT(DISTINCT dp.msisdn) AS active_orange_subscribers FROM daily_parc dp WHERE dp.year = 2025 \
@@ -1854,29 +1978,32 @@ def Agent_KPI_req_gemini(echantillon, requete, requete_sql, user_dir):
         f.write(response.text)
     
     sql_query = Extract_sql(path)
-    print(f"\n {sql_query}\n")
+    print(f"Requete KPI :\n {sql_query}\n")
 
     return sql_query, info_kpi
     #return response.text
 
 ###################################################################################
-#               Analyse et recommande                                              #
-def analyse_recommand_gemini(api_key = api_k, request=None, nb_imgD=1,nb_imgKPI=1, info_kpi=None):
+#               Analyse et recommande   
+apii = "AIzaSyD-yA0SYZtsxsaMNRbkBusxY_BR-6kKi38"
+def analyse_recommand_gemini(api_key = apii, img_dash = None, img_dash_kpi = None, request=None, nb_imgD=1,nb_imgKPI=1, info_kpi=None):
     # Configuration Gemini
     genai.configure(api_key = api_key)
+    #genai.configure(api_key = api_k)
 
     # Charger les images (même logique que ton code OpenAI)
-    image_paths_dash = [f"Image/{i}.png" for i in range(nb_imgD)]
+    #image_paths_dash = [f"Image/{i}.png" for i in range(nb_imgD)]
+    image_paths_dash = [f"{img_dash}/{i}.png" for i in range(nb_imgD)]
 
     # Créer une grille (si tu veux conserver ta fonction combine_images_grid)
-    
-    dash = combine_images_grid(image_paths_dash)
+    dash = combine_images_grid(image_paths_dash, output_path= f"{img_dash}/dash.png")
     #dash = 'Dashboard.png'
 
-    image_paths_kpi = [f"img_kpi/{i}.png" for i in range(nb_imgKPI)]
+    #image_paths_kpi = [f"img_kpi/{i}.png" for i in range(nb_imgKPI)]
+    image_paths_kpi = [f"{img_dash_kpi}/{i}.png" for i in range(nb_imgKPI)]
 
     # Créer une grille (si tu veux conserver ta fonction combine_images_grid)
-    kpi = combine_images_grid(image_paths_kpi, output_path= "img_kpi/dash.png")
+    kpi = combine_images_grid(image_paths_kpi, output_path= f"{img_dash_kpi}/dash.png")
     
     # Charger l’image du dash
     image_dash = Image.open(dash)
@@ -1909,7 +2036,8 @@ def analyse_recommand_gemini(api_key = api_k, request=None, nb_imgD=1,nb_imgKPI=
     Les analyses sont faites sur le premier visuel et leurs causes sont sur le second visuel. Evitez les fautes sur les chiffres qui 
     sont sur le Dashboard. Donnez les éléments exact du Dashboard. Parfois, vous pouvez rencontrer des exemples de valeurs comme 15K, 
     2M, 7B, etc. le 'K' représente les millièmes, le 'M' les millions et le 'B' les milliards.Si vous voyez des graphes qui parlent d'argent 
-    (chiffres d'affaires (ca), revenu, ect.), sachez que les données sont en FCFA.
+    (chiffres d'affaires (ca), revenu, ect.), sachez que les données sont en FCFA. Pour les KPI sur les communes (département ou région), les segments marche ou recharges, " \
+    les formules tarifaires, ne choississez pas les tables daily car elles ne sont pas adaptées, utilisez plutot les monthly.
     
     Notez que msisdn représente l'identifiants des clients.
     Contexte : vous êtes un **analyste data senior avec une forte expertise business et marketing à la SONATEL**.
@@ -1926,6 +2054,7 @@ def analyse_recommand_gemini(api_key = api_k, request=None, nb_imgD=1,nb_imgKPI=
         ],
         #generation_config={"max_output_tokens": 600}
     )
+
 
     return response.text
 
@@ -1946,6 +2075,12 @@ def Agent_analyst_RAG_Gemini(requete):
     #        Mixtral
     #api = "4ZGCRy6uvJPyAceCsnwZTOsk5LnJ9x41"
 
+    ###################################  
+    #       Llama de Groq 
+    #api = "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"
+    #api = "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"          # Token Hugging Face
+
+
     # embedding de google
     #embedding_model = "text-embedding-004" "models/text-embedding-001" "gemini-embedding-001" "models/embedding-001"
     #embeddings = genai.embed_content(model=embedding_model,content=docs)
@@ -1957,8 +2092,9 @@ def Agent_analyst_RAG_Gemini(requete):
         asyncio.set_event_loop(asyncio.new_event_loop())
 
     #embeddings = GoogleGenerativeAIEmbeddings(model="text-embedding-004", google_api_key = api_k)
-    print("Gass OK")
-
+    #print("Gass OK")
+    ##########################################################
+    #           Embeddings
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
     # la base vectorielle
@@ -1967,12 +2103,14 @@ def Agent_analyst_RAG_Gemini(requete):
     # Récupérateur
     retriever = db.as_retriever()
 
-    # model= "mistral-large-latest",    , "mistral-small", "mistral-tiny"  "mistral-medium"
+    # model= "mistral-large-latest",  "mistral-small", "mistral-tiny"  "mistral-medium" "mistral-large-2.1"     "open-mixtral-8x22b"
 
     # Chaîne RAG avec Gemini comme LLM
     qa_chain = RetrievalQA.from_chain_type(
         llm=ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0, google_api_key = api),
-        #llm = ChatMistralAI(model = "mistral-medium", api_key= api, temperature= 0),
+        #llm=ChatOpenAI(model_name="gpt-4o", temperature=0, api_key= openai_key),
+        #llm = ChatMistralAI(model = "open-mixtral-8x22b", api_key= api, temperature= 0),
+        #llm = ChatGroq(model="llama-3.3-70b-versatile", api_key= api, temperature=0),  # llama-3.3-70b-versatile,  llama-3.1-8b-instant
         retriever=retriever,
         return_source_documents=True
     )
@@ -2039,7 +2177,7 @@ def Agent_analyst_RAG_Gemini(requete):
         pour répondre à la question. Analysez la question pour voir, est ce que vous devez de faire une requete \
         simple , d'aggrégation, de jointure ou combiné. Notez que 'OM' signifie 'Orange Money'. Ne donne jamais un " \
         "nom de table qui n'existe pas dans le catalogue de données fournies dans le RAG. Parfois la réponse à la question peut nécessiter de " \
-        "faire une jointure entre plusieurs tables, dans ce cas, donnez en retour tout les tables nécessaires à la question" \
+        "faire une jointure entre plusieurs tables, dans ce cas, donnez en retour tout les tables nécessaires à la question." \
         "Notez que la jointure entre les tables peut etre fait entre des colonnes qui ne représente pas l'identifiant " \
         "des clients. Faites bien la différence entre les tables parc, de l'application Maxit, de souscriptions des offres, du trafic réseau (2G/3G/4G/5G) ou de " \
         "consommation de donnée (data) mobile, du programme de fidélité Sargal, de voix, CA recharges ou chiffre d'affaires (ca), pour les trafic à " \
@@ -2071,13 +2209,15 @@ def Agent_analyst_RAG_Gemini(requete):
         "cellules radios correspondant (NOM_SITE, NOM_CELLULE, CELLID, ID, TYPE_CELLULE, la REGION, le DEPARTEMENT, etc). daily_infos_otarie et monthly_terminaux donnent " \
         "le parc des clients avec leurs appareils mobiles et leurs marques utilisés, le parc d'utilisation du reseau (5G, 4G, 3G, 2G) et les " \
         "volumes de données consommées pour chaque réseau en MégaOctets (Mo).monthly_terminaux contiennent aussi les infos sur la commune, segment marche et le formule tarifaire. daily_localisation_5g fournit les " \
-        "infos géographiques des clients. daily_maxit et monthly_maxit donnent les clients qui se sont connectés sur l'application mobile " \
-        "MAXIT avec le service utilisé tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services et parcs de l'application mobile Maxit. " \
+        "infos géographiques des clients. daily_maxit et monthly_maxit donnent les infos des clients qui se sont connectés sur l'application mobile MAXIT pour faire un transfert d'argent, retrait, consulter de solde, Achat d'offres, paiement de facture, etc " \
+        "tandisque reporting_daily_maxit, reporting_monthly_maxit, reporting_daily_parc_maxit et reporting_usage_maxit font le reporting des services ou fonctions et parcs de l'application " \
+        "mobile Maxit.Notez que la table reporting_usage_maxit contient les ca d'usages (achat data, d'illimix, d'illiflex, de mixel, etc) et les parc d'usages " \
+        "(parc data, d'illimix, d'illiflex, mixel, etc) de l'application Maxit.Autrement dit, reporting_usage_maxit contient les CA sur la souscription des offres sur MAXIT et le parc des offres souscrit sur MAXIT. " \
         "monthly_maxit, reporting_daily_maxit, reporting_monthly_maxit et reporting_daily_parc_maxit contiennent aussi les infos sur les communes, les segments et les formules tarifaires." \
         "daily_parc_recharges, daily_parc_pass, daily_parc_maxit, daily_parc_maxit_new, daily_parc_illimix, daily_parc_illiflex, " \
         "daily_parc_data_4g, daily_parc_data et daily_parc_sargal fournissent les informations sur les clients ou le parc client sur la dernière date d'activation " \
         "(last_active_date) ainsi que la fréquence (nb_j_distinct) pour les recharges, les pass, d'utilisation maxit, d'achat illimix et illiflex et data " \
-        " du trafic le réseau 4G, de data trafiqué le réseau global et de partciper au programme Sargal. daily_recharges, monthly_recharges et reporting_ca_monthly donne les " \
+        "du trafic le réseau 4G, de data trafiqué le réseau global et de partciper au programme Sargal. daily_recharges, monthly_recharges et reporting_ca_monthly donne les " \
         "chiffres d'affaires total (ca_recharge) ou générés pour tout les recharges (ca_recharges) sur les différents canaux ainsi que par canal (par OM " \
         "(ca_pass_glob_om_jour, ca_credit_om), par Wave (ca_wave), par Seddo(ca_seddo), par cartes (ca_cartes), à l'international (ca_iah), " \
         "et par self_top_up).monthly_recharges et reporting_ca_monthly contiennent aussi les infos sur les communes, les segments et les formules tarifaires. monthly_sargal, daily_sargal, reporting_sargal_echangeurs_mon, reporting_sargal_gift_daily, " \
@@ -2120,8 +2260,8 @@ def Agent_analyst_RAG_Gemini(requete):
         "Si vous recevez une question sur le chiffre d'affaire tout court (Donne moi le Ca, quel est l'évolution du CA,quel est le ca par segment, etc) sans que l'utilisateur précise le chiffre " \
         "d'affaire de quoi, sachez que l'utilisateur veut simplement le chiffre d'affaire total qui n'est rien d'autre que le chiffre d'affaire des recharges " \
         "(ca recharges). Le chiffre d'affaire seulement fait référence au chiffres d'affaires des recharges(ca_recharges) ou CA total. Pour les questions " \
-        "sur la segmentation, ne choisissez jamais les tables de reporting car elle ne sont pas adapté, utilise plutot les tables monthly (mensuelles) " \
-        "ou daily (quotidiennes)." \
+        "sur la segmentation, ne choisissez jamais les tables de reporting car elles ne sont pas adapté, utilise plutot les tables monthly (mensuelles) " \
+        "ou daily (quotidiennes). Si vous avez une question qui parle des offres, sache que l'utilisateur veut avoir des infos sur la souscription des offres." \
         \
         "Evitez les erreurs sur les noms de tables que vous fournissez en sortie, cela repercutera négativement sur l'exécution " \
         "de la requete qui sera produite. Réponds uniquement avec les informations issues des documents fournits sans inventer ou modifier un nom de " \
@@ -2132,11 +2272,30 @@ def Agent_analyst_RAG_Gemini(requete):
         f"```json \
         {json.dumps(exemple_sortie, indent=2, ensure_ascii=False)} \
         ``` " \
-        "Donnez en retour un fichier JSON valide et sérialisable et que la valeurs ou les valeurs des clés soit ou soient dans une ligne (pas de retour à la ligne)."
+        "Donnez en retour un fichier JSON valide et sérialisable et que la valeur ou les valeurs des clés soit ou soient dans une ligne (pas de retour à la ligne)."
 
+    ################################## 
+    #       GOOGLE ou MISTRAL
     result = qa_chain(query)
     print("OKk")
 
+    ##########################################
+    #       OPENAI
+    """
+    with get_openai_callback() as cb:
+        result = qa_chain(query)
+        print(f"Prompt tokens : {cb.prompt_tokens}")
+        print(f"Completion tokens : {cb.completion_tokens}")
+        print(f"Total tokens : {cb.total_tokens}")
+        print(f"Coût (USD) : {cb.total_cost}")
+        print("OKk")
+    """
+    #print(result["result"])
+    ############################### 
+    #       OpenAI
+    #return result["result"], cb.total_cost
+    ############################### 
+    #       Google ou Mistral
     return result["result"]
 
 def Agent_info_supp_Gem(result_table, requete, user_dir) :
@@ -2160,18 +2319,25 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
     
     ###############################################       
     ####      Google
-    key = "AIzaSyBxwZpwLsAl3YDWBfnsXd35djouNV3lX3E"
+    key = "AIzaSyBFlCFG--ZYmvb9nqy7Gg9fuPmo8gaWgPY"
 
     ##############################################
     #        Mistral
     #key = "b82WCxtVIqvPq9fK3iZPirxGLyO6Lt0L"
     # model= "mistral-large-latest",  "mistral-small" "mistral-tiny"  "mistral-medium"
 
+    ###################################  
+    #       Llama de Groq 
+    #key = "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"
+
     # RAG
     retriever = db.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
         llm=ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0, google_api_key = key) ,
-        #llm = ChatMistralAI(model= "mistral-small", api_key= key, temperature= 0),
+        #llm=ChatOpenAI(model_name="gpt-5-mini", temperature=0, api_key= openai_key),  #    "gpt-5-mini"     "gpt-4o-mini"
+        #llm=ChatOpenAI(model_name="gpt-4o", api_key= openai_key),
+        #llm = ChatMistralAI(model_name = "open-mixtral-8x22b", api_key= key, temperature= 0),
+        #llm = ChatGroq(model="llama-3.3-70b-versatile", api_key = key, temperature=0, max_retries= 10), # llama-3.3-70b-versatile ,  llama-3.1-8b-instant
         retriever=retriever,
         return_source_documents=True
     )
@@ -2207,14 +2373,31 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
         Notez que le RAG contient quelques variables catégorielles et leur valeurs uniques.Votre mission est de recupérer \
         la ou les valeur(s) unique(s) nécessaire(s) de la ou les colonne(s) pour répondre à la question qui a été posée.Notez que 'OM' \
         signifie 'Orange Money'.Si la question ne nécessite pas d'info supplémentaire sur le RAG, donnez en retour qu'elle n'a pas besoin d'infos sup. \
-        Donner en sortie une ou des colonnes (s'il y en a dans le RAG) avec quelque(s) de sa ou ses valeurs uniques qui permet(tent) \
+        Donner en sortie une ou des colonnes (s'il y en a dans le RAG) avec quelque(s) de sa ou ses valeurs unique(s) qui permet(tent) \
         de répondre à la question : {requete}.Par exemple, [ service : 'By_SENELEC' pour les paiement SENELEC, segment_marche : ['JEUNES', 'ENTRANT'] pour une question sur le marché des JEUNES et des ENTRANT,  \
-        ca_cr_commune_90 : 'DAKAR' pour une question sur la commune de Dakar sur les 90 derniers jours ,offer_name = [ 'PASS 2,5GO', 'ILLIMIX JOUR 500F', 'PASS 150 MO'], etc pour une question\
+        ca_cr_commune_90 : 'DAKAR' pour une question sur la commune de Dakar sur les 90 derniers jours, offer_name = [ 'PASS 2,5GO', 'ILLIMIX JOUR 500F', 'PASS 150 MO'], etc pour une question\
         les souscriptions aux offres 'PASS 2,5GO', 'ILLIMIX JOUR 500F', 'PASS 150 MO', etc] ou bien pas besoins d'informations \
         supplémentaires s'il n'en a pas. Si la question n'est pas spécifique à une valeur d'une variable, cela veut dire qu'on a \
-        besoin de tout les infos de la variables, dans ce cas ce n'est pas la peine de retourner des valeurs uniques de la variables."""
+        besoin de tout les infos de la variables, dans ce cas, ce n'est pas la peine de retourner des valeurs uniques de la variables."""
 
+    ############################# Google ou Mistral
     result = qa_chain(query)
+
+    ##########################################
+    #       OPENAI
+    """
+    with get_openai_callback() as cb:
+        result = qa_chain(query)
+        print(f"Prompt tokens : {cb.prompt_tokens}")
+        print(f"Completion tokens : {cb.completion_tokens}")
+        print(f"Total tokens : {cb.total_tokens}")
+        print(f"Coût (USD) : {cb.total_cost}")
+        data = f"{result_table}\n\n{result['result']}"
+    """
+    #print(result["result"])
+
+    ############################# 
+    ###      Google ou Mistral
     data = f"{result_table}\n\n{result['result']}"
 
     path = f"{user_dir}_infos_RAG.txt"
@@ -2224,8 +2407,14 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
 
     print("OK Inf")
 
-    #print("Réponse :", result["result"])
     #print("Source :", result["source_documents"][0])
+
+    ############################### 
+    #       OpenAI
+    #return result["result"], cb.total_cost
+
+    ############################# 
+    #       Google ou Mistral
     return result["result"]
 
 def clean_json_text(text: str) -> str:
@@ -2255,7 +2444,6 @@ def Agent_SQL_Gem (requete, user_dir):
 
     ######################################## 
     #       Google
-
     key = "AIzaSyAE2xoS85v6DWEZLl4C3XrvAkVk1Uoee-k"
     #key = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
     os.environ["GOOGLE_API_KEY"] = key
@@ -2263,6 +2451,7 @@ def Agent_SQL_Gem (requete, user_dir):
     genai.configure(api_key = key)
     
     result_table = Agent_analyst_RAG_Gemini(requete)
+    #result_table, cout1 = Agent_analyst_RAG_Gemini(requete)
 
     print(result_table)
 
@@ -2279,11 +2468,11 @@ def Agent_SQL_Gem (requete, user_dir):
     data = json.loads(result_table) 
     list_tab = []
     path = f"{user_dir}_desc_tab_output.txt"
-    for key, value in data.items():
+    for Key, value in data.items():
         info_tab = {
-            "nom_table" : key,
+            "nom_table" : Key,
             "description" : value,
-            "colonnes" : caracteristique[key]
+            "colonnes" : caracteristique[Key]
         }
         list_tab.append(info_tab)
     result_table = list_tab
@@ -2293,6 +2482,7 @@ def Agent_SQL_Gem (requete, user_dir):
 
 
     info_sup = Agent_info_supp_Gem(result_table, requete, user_dir)
+    #info_sup, cout2 = Agent_info_supp_Gem(result_table, requete, user_dir)
     print(info_sup)
 
 
@@ -2303,6 +2493,16 @@ def Agent_SQL_Gem (requete, user_dir):
     ###########################################  
     #            Mistral
     #model = Mistral(api_key= os.environ["MIXTRAL_API_KEY"])
+
+    ##########################################
+    #           Llamma
+    #lama = "llama-3.3-70b-versatile"   # ou "llama-3.1-8b-instant"      
+    #Key = "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"
+    #model = OpenAI(base_url="https://api.groq.com/openai/v1", api_key = Key)
+
+    ###########################################
+    #       OpenAI
+    #model = OpenAI(api_key=openai_key)
 
     prompt = f"Vous allez recupérer uniquement la ou les table(s) de données suivante(s): {result_table}, " \
             "et les informations supplémentaires (s'il y en a) :"f" {info_sup} " \
@@ -2358,20 +2558,30 @@ def Agent_SQL_Gem (requete, user_dir):
             "le calculer en appliquant la formule de la corrélation.Autrement dit, n'utilise jamais une fonction SQL obsolète dans " \
             "la requete.Ne met jamais de requete avec une sous requete sur la clause WHERE." \
             "Par exemple,  WHERE year = (SELECT ....), Utilise plutot JOIN ON à place. " \
+            "Si vous avez une question sur les regions ou départements et que la ou les table(s) fournis ne contient(ent) pas la colonne région " \
+            "ou département mais a les communes, prenez la table du nom de 'monthly_clients' qui donne les infos sur les clients avec les colonnes " \
+            "'region_monthly', 'departement_monthly', 'ca_cr_commune_monthly', etc pour faire la jointure avec la ou les table(s) fournis en input pour donner " \
+            "les informations sur les régions ou départements." \
             \
             "Sur la requete SQL, ordonnez toujours le résultat du plus récents au plus anciens ou du plus grand au plus petit." \
             "Analysez la question pour voir, est ce que vous devez de faire une requete simple,d'aggrégation,de jointure ou combiné." \
             \
             "Sur les questions sur les souscriptions des offres, Notez que nous avons des catégories ou types d'offres (Pass Internet, illimix, illiflex, bundles, Mixel, International, NC) avec leur " \
-        "formule tarifaire ou commerciale (JAMONO NEW S'COOL, JAMONO ALLO, JAMONO PRO, JAMONO MAX, AUTRES) et leurs segments recharges (Mass-Market, High, Middle, S0, super high) " \
-        "et marché (JEUNES, ENTRANT, KIRENE AVEC ORANGE, AUTRES,MILIEU DE MARCHE,HAUT DE MARCHE, TRES HAUT DE MARCHE ) correspondant. Chaque type ou catégorie d'offres contient " \
-        "plusieurs offres de souscriptions. Notez qu'aussi les offres data font références aux offres de type PASS INTERNET." \
-        \
-        "Si vous recevez une question sur le chiffre d'affaire tout court (Donne moi le Ca, quel est l'évolution du CA, etc) sans que l'utilisateur précise le chiffre " \
-        "d'affaire, sachez que l'utilisateur veut simplement le chiffre d'affaire total qui n'est rien d'autre que le chiffre d'affaire des recharges " \
-        "(ca recharges). Le chiffre d'affaire seulement fait référence au chiffres d'affaires des recharges(ca_recharges) ou CA total." \
-        \
-        "Produit en retour une requete SQL qui est claire, structurée, correcte et exécutable sous Hive ,prenez seulement tout les " \
+            "formule tarifaire ou commerciale (JAMONO NEW S'COOL, JAMONO ALLO, JAMONO PRO, JAMONO MAX, AUTRES) et leurs segments recharges (Mass-Market, High, Middle, S0, super high) " \
+            "et marché (JEUNES, ENTRANT, KIRENE AVEC ORANGE, AUTRES,MILIEU DE MARCHE,HAUT DE MARCHE, TRES HAUT DE MARCHE ) correspondant. Chaque type ou catégorie d'offres contient " \
+            "plusieurs offres de souscriptions. Notez qu'aussi les offres data font références aux offres de type PASS INTERNET." \
+            \
+            "Pour des questions sur le ca recharges maxit ou souscription des offres sur MAXIT, si la table choisit est reporting_daily_maxit ou reporting_monthly_maxit, il faut aller " \
+            "chercher le montant des transactions pour les fonctionnalités Achat pass illimix, Achat pass illiflex, Achat pass mixel, Achat Pass Data, " \
+            "Achat Pass International, Achat de Pass FLYBOX, Achat Pass Voyage, etc (filtre sur les fonctionnalité) " \
+            "et le combiner avec le filtre categorie ='OM', si la table choisit est daily_maxit ou monthly_maxit, il faut chercher les montants des transactions " \
+            "pour les services BUY_ILLIMIX, BUY_ILLIFLEX, BUY_MIXEL, BUY_DATA, BUY_PASS_INTERNATIONAL (filtre sur les services) et le combiner avec le filtre extra_source = 'OMY'." \
+            \
+            "Si vous recevez une question sur le chiffre d'affaire tout court (Donne moi le Ca, quel est l'évolution du CA, etc) sans que l'utilisateur précise le chiffre " \
+            "d'affaire, sachez que l'utilisateur veut simplement le chiffre d'affaire total qui n'est rien d'autre que le chiffre d'affaire des recharges " \
+            "(ca recharges). Le chiffre d'affaire seulement fait référence au chiffres d'affaires des recharges(ca_recharges) ou CA total." \
+            \
+            "Produit en retour une requete SQL qui est claire, structurée, correcte et exécutable sous Hive ,prenez seulement tout les " \
             "colonnes qui contiennent l'information de la question.Utilisez toujours des alias dans la requete et ajouter les colonnes year" \
             \
             "et month dans la sélection.La requete doit etre exécutée sous 'Hive'.Alors, produit en retour une " \
@@ -2403,12 +2613,47 @@ def Agent_SQL_Gem (requete, user_dir):
         #generation_config={"max_output_tokens": 600}
     )
 
+    ####################### OpenAI ##########################################
+    #response = model.chat.completions.create(
+    #    model= "gpt-4o",
+    #    messages= [
+    #        {
+    #            "role": "user",
+    #            "content": [
+    #                {
+    #                    "type": "text",
+    #                    "text": str(prompt) }]
+    #        }
+    #    ],
+    #    temperature = 0
+    #)
+    # cout modèle
+    #responses = response.choices[0].message.content
+    #print(f"{responses}\n\n")
+    # calcule du cout pour gpt-4o
+    #usage = response.usage
+    #prompt_tokens = usage.prompt_tokens
+    #completion_tokens = usage.completion_tokens
+    ###########cout en dollars
+    #cout3 = (prompt_tokens * 0.0025 / 1000) + (completion_tokens * 0.01 / 1000)
+    #cout_T = cout3 + cout2 + cout1
+    #print(f"Cout Total : {cout_T}")
+
     ######################### Mixtral  #######################################
     #response = model.chat.complete(
-    #                model= "mistral-large-latest",  # mistral-large-latest   , mistral-small  "mistral-medium"
-    #                #model="Mixtral-8×22B-v0.1",
+    #                model = "open-mixtral-8x22b",  # mistral-large-latest   , mistral-small  "mistral-medium"      "mistral-tiny"
+                    #model="Mixtral-8×22B-v0.1",
     #                messages=[{"role":"user","content": str(prompt)}],
     #                temperature= 0
+    #                )
+
+    #######################  Llamma  ########################################
+    #response = model.chat.completions.create(
+    #                    model = lama,
+    #                    messages = [
+    #                        {"role": "user", "content": str(prompt)}
+    #                    ],
+    #                    temperature=0      
     #                )
 
     print("Good")
@@ -2421,15 +2666,23 @@ def Agent_SQL_Gem (requete, user_dir):
         f.write(response.text)
 
         #########################################
-        #            Mixtral
+        #            Mixtral ou OPENAI
+        #f.write(response.choices[0].message.content)
+
+        #########################################
+        #            Llama
         #f.write(response.choices[0].message.content)
     
     sql_query = Extract_sql(path)
 
     print(sql_query)
 
+    ############################### Google, Mistral, Llama
     return sql_query
-    #return response.text
+
+    ########################### OpenAI
+    #return sql_query, cout_T
+    
 
 
 
