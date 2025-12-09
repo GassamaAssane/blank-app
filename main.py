@@ -6,20 +6,13 @@ from decimal import Decimal
 import json
 import os
 import streamlit as st
-
-# Vérifie si l'utilisateur appelle le test de santé
-if "ping" in st.query_params:
-    st.write("OK")
-    st.stop()  # Arrête l'exécution ici
-
 import datetime
 from datetime import datetime as dt
 import re
 from typing import Dict, List, Any, Optional
 import plotly.express as px
+import kaleido
 import plotly.io as pio
-pio.kaleido.scope.default_format = "png"
-
 from itertools import combinations
 import random
 from pathlib import Path
@@ -153,135 +146,6 @@ def list_chats(username):
     return chats_hist
 
 
-def auto_charts(data: pd.DataFrame):
-    charts = []
-
-    df = data.copy()
-
-    #for col in df.columns:
-        # Convertir en datetime si possible OU si le nom évoque une date
-        #if np.issubdtype(df[col].dtype, np.datetime64) or col.lower() in ["date", "datetime", "timestamp"]:
-        #    df[col] = pd.to_datetime(df[col], errors="coerce")
-        # Extraire year / month si la colonne est de type datetime
-        #if np.issubdtype(df[col].dtype, np.datetime64):
-        #    if "year" not in df.columns:
-        #        df["year"] = df[col].dt.year
-        #    if "month" not in df.columns:
-        #        df["month"] = df[col].dt.month
-
-    # Sélection des types de colonnes 
-    numeric_cols = df.select_dtypes(include="number").columns.tolist()
-    cat_cols     = df.select_dtypes(exclude="number").columns.tolist()
-
-    #Histogrammes numériques 
-    for col in numeric_cols:
-        if col == "year" or col == "month" or col =="day" :
-            continue
-        else :
-            fig = px.histogram(df, x=col, nbins=5,
-                            title=f"Histogramme de {col}")
-            charts.append(("Histogramme", col, fig))
-
-    #Bar charts catégoriels 
-    for col in cat_cols:
-        if col == "MSISDN" or col == "msisdn" or col == "DATA_LOADED" or col == "data_loaded":
-            continue
-        else :
-        # Fréquence des 20 modalités les plus fréquentes
-            if df[col].nunique > 5 :
-                vc = df[col].value_counts().nlargest(5).reset_index()
-                vc.columns = [col, "count"]
-                fig = px.bar(vc, x=col, y="count",
-                            title=f"Bar chart : répartition des 5 plus grand {col}")
-                charts.append(("Bar chart", col, fig))
-
-                # Fréquence des 5 modalités les moins fréquentes
-                vc = df[col].value_counts(ascending=True).head(5).reset_index()
-                
-                fig = px.bar(vc, x=col, y="count",
-                            title=f"Bar chart : répartition des 5 plus faible {col}")
-                charts.append(("Bar chart", col, fig))
-            else : 
-                vc = df[col].value_counts(ascending=False).reset_index()
-                vc.columns = [col, "count"]
-                fig = px.bar(vc, x=col, y="count",
-                            title=f"Bar chart {col}")
-                charts.append(("Bar chart", col, fig))
-
-    # Bar chart numérique vs catégoriel 
-    
-    for num_col in numeric_cols:
-        if num_col == "day" or num_col == "year" or num_col == "month":
-            continue
-        else :
-            for cat_col in cat_cols:
-                if cat_col == "MSISDN" or cat_col == "msisdn" or cat_col == "DATA_LOADED" or cat_col == "data_loaded" :
-                    continue
-                else :
-                    df_grouped = df.groupby(cat_col, as_index=False)[num_col].sum()
-                    fig = px.bar(df_grouped, x = cat_col, y = num_col,
-                                title=f"Bar chart {num_col} par {cat_col}",
-                                labels={"x" : cat_col, "y" : num_col},
-                                color = "cat_col" )
-                    charts.append(("Bar chart", f"{num_col} / {cat_col}", fig))
-    
-
-    # Boxplots numérique vs catégoriel 
-    
-    for num_col in numeric_cols:
-        if num_col == "year" or num_col == "month" or num_col == "day" :
-            continue
-        else :
-            for cat_col in cat_cols:
-                if cat_col == "MSISDN" or cat_col == "msisdn" or cat_col == "DATA_LOADED" or cat_col == "data_loaded" :
-                    continue
-                else :
-                    fig = px.box(df, x=cat_col, y=num_col,
-                                title=f"Boxplot {num_col} par {cat_col}")
-                    charts.append(("Boxplot", f"{num_col} / {cat_col}", fig))
-
-    # Scatter plots entre numériques 
-    """
-    for x_col, y_col in combinations(numeric_cols, 2):
-        fig = px.scatter(df, x=x_col, y=y_col,
-                         title=f"Scatter {x_col} vs {y_col}")
-        charts.append(("Scatter", f"{x_col} vs {y_col}", fig))
-    """
-
-    # Courbes temporelles (year / month) 
-    if "year" in df.columns :
-        # Fréquence par année
-        for num_col in numeric_cols :
-            if num_col == "year" :
-                continue
-            else :
-
-                df_grouped = df.groupby("year", as_index=False)[num_col].sum()
-                #year_counts = df["year"].value_counts().sort_index().reset_index()
-                #year_counts.columns = ["year", "count"]
-                fig = px.line(df_grouped, x="year", y=num_col,
-                            title="Évolution du nombre d’enregistrements par année", 
-                            labels={"x" : "year", "y" : num_col}),
-                charts.append(("Courbe", "year", fig))
-
-    if "month" and "year" in df.columns or ("annee" and "mois") in df.columns :
-        for num_col in numeric_cols :
-            if num_col == "year" or num_col == "month" or num_col == "mois" or num_col == "annee":
-                continue
-            else :
-        # Fréquence par mois (toutes années confondues)
-                df_grouped = df.groupby(["year", "month"], as_index=False)[num_col].sum()
-                #month_counts = df["month"].value_counts().sort_index().reset_index()
-                #month_counts.columns = ["month", "count"]
-                fig = px.line(df_grouped, x="month", y=num_col,
-                              #line_group= "year",
-                              color= "year" ,
-                            title="Évolution du nombre d’enregistrements par mois ")
-                charts.append(("Courbe", "month", fig))
-
-    return charts
-
-
 def Auto_charts(df=None, path="Image") :
 
     #df = pd.read_csv(uploaded_file, sep=";")
@@ -334,7 +198,7 @@ def Auto_charts(df=None, path="Image") :
                         fig.write_image(f"{folder}/{i}.png")
                         i = i + 1
                         #img = Image.open(f"{folder}/{i}.png")
-                        charts.append(("Courbe", f"{num}_vs_{time_col}", fig))
+                        charts.append(("Courbe", f"{num}__vs__{time_col}", fig))
                         #df_t = df.groupby(time_col)[num].sum().reset_index()
                         #df_t[time_col] = df_t[time_col].map(mois_dict)
                 elif time_col == "year" :
@@ -417,6 +281,7 @@ def Auto_charts(df=None, path="Image") :
                     fig0.write_image(f"{folder}/{j}.png")
                     j = j + 1
                     fig1.write_image(f"{folder}/{j}.png")
+                    #fig0.write_html(include_plotlyjs = True)
                     #st.plotly_chart(px.pie(df, names=cat, values=num, title=f"Répartition de {num} par {cat}"))
                     charts.append(("Bar chart", f"{num} vs {cat}", fig0))
                     charts.append(("Bar chart 1", f"{num}_vs_{cat}", fig1))
@@ -430,13 +295,21 @@ def Auto_charts(df=None, path="Image") :
 
 
 def display_charts(df: pd.DataFrame) :
+    #print(df.columns)
 
     #df = pd.read_csv(uploaded_file, sep=";")
     #st.write("Aperçu des données :", df.head())
     charts = []
 
-    numeric_cols = df.select_dtypes(include='number').columns.tolist()
-    categorical_cols = df.select_dtypes(exclude='number').columns.tolist()
+    #numeric_cols = df.select_dtypes(include='number').columns.tolist()
+    #categorical_cols = df.select_dtypes(exclude='number').columns.tolist()
+
+    numeric_cols = df.select_dtypes(include=['int', 'float']).columns.tolist()
+    #st.write(f"Var num {numeric_cols}")
+    categorical_cols = df.select_dtypes(exclude=['int', 'float']).columns.tolist()
+
+    num_cols = []
+    cols_sup = []
 
     mois_dict = {
         1: "Jan", 2: "Fév", 3: "Mars", 4: "Avr",
@@ -444,9 +317,279 @@ def display_charts(df: pd.DataFrame) :
         9: "Sept", 10: "Oct", 11: "Nov", 12: "Déc"
     }
 
+    PALETTE = px.colors.qualitative.Plotly
+
     #st.subheader("Courbes d’évolution temporelles")
     for time_col in [c for c in df.columns if "year" in c.lower() or "month" in c.lower() or "day" in c.lower()]:
-        for num in numeric_cols:
+
+        #détecter automatiquement les colonnes ca
+        ca_cols = [col for col in numeric_cols if "ca_" in col.lower() or "_ca" in col.lower() or "chiffre_affaire" in col.lower() or "montant" in col.lower() or "revenu" in col.lower() or "amount" in col.lower() or "mnt" in col.lower() or " ca " in col.lower()]
+        vol_cols = [col for col in numeric_cols if "volum" in col.lower() or "minute" in col.lower() or "second" in col.lower() or "trafic" in col.lower() or "traffic" in col.lower()]
+        parc_cols = [col for col in numeric_cols if "parc" in col.lower() or "sortant" in col.lower() or "acquis" in col.lower() or "reactiv" in col.lower() or "client" in col.lower() or "nombr" in col.lower() or "cnt" in col.lower()]
+        
+        if len(ca_cols) > 0 and not any("volum" in elem.lower() for elem in ca_cols) :
+            if df[time_col].nunique() > 1:
+                # Si c'est une colonne de mois numériques, la convertir en noms
+                if time_col == "month" :
+                    df_t = df.groupby(["year", "month"])[ca_cols].sum().reset_index()
+                    # Création d'une date fictive pour le tri
+                    df_t["date"] = pd.to_datetime(dict(year=df_t["year"], month=df_t["month"], day=1))
+                    
+                    # Création de l'étiquette
+                    df_t["MONTH"] = df_t.apply(lambda row: f"{mois_dict[row['month']]}-{row['year']}", axis=1)
+                    
+                    # Tri chronologique
+                    df_t = df_t.sort_values("date")
+
+                    #transformer le DataFrame pour plotly
+                    df_melted = df_t.melt(
+                        id_vars="MONTH",
+                        value_vars=ca_cols,
+                        var_name="CA",
+                        value_name="Valeur"
+                    )
+                    #tracer les courbe
+                    fig = px.line(
+                        df_melted,
+                        x="MONTH",
+                        y="Valeur",
+                        color="CA",
+                        markers=True,
+                        color_discrete_sequence= PALETTE,
+                        title="Évolution mensuelle des différents <br>types de CA"
+                    )
+
+                    fig.update_layout(
+                        xaxis_title="Mois",
+                        yaxis_title="Valeur (CA)",
+                        legend_title="Type de CA",
+                        title_x=0.3,
+                        hovermode="x unified"
+                    )
+                    charts.append(("Courbe", f"Les CA_vs_{time_col}", fig))
+                if time_col == "day" :
+                    df_t = df.groupby(["year","day"])[ca_cols].sum().reset_index()
+                    df_t["day"] = pd.to_datetime(df_t["day"], yearfirst=True, format="%Y%m%d")
+                    df_t = df_t.sort_values(by="day", ascending=False)
+       #Ajouter une colonne "jour" qui contient le jour du mois
+                    df_t["Jours"] = df_t["day"].dt.day
+                    #transformer le DataFrame pour plotly
+                    df_melted = df_t.melt(
+                        id_vars="day",
+                        value_vars= ca_cols,
+                        var_name="CA",
+                        value_name="Valeur"
+                    )
+                    #tracer les courbe
+                    fig = px.line(
+                        df_melted,
+                        x="day",
+                        y="Valeur",
+                        color="CA",
+                        markers=True,
+                        color_discrete_sequence= PALETTE,
+                        title="Évolution quotidienne du CA"
+                    )
+
+                    fig.update_layout(
+                        xaxis_title="Jours",
+                        yaxis_title="CA",
+                        legend_title="Type de CA",
+                        title_x=0.3,
+                        hovermode="x unified"
+                    )
+                    fig.write_image("C:/Users/stg_gassama92247/Desktop/Sonatel/TEST.png")
+                    charts.append(("Courbe", f"ca_day_vs_{time_col}", fig))
+
+            ca_cols_sup = [x for x in numeric_cols if x not in ca_cols and x not in parc_cols and x not in vol_cols]
+            #st.write(f"ca : {ca_cols_sup}")
+            cols_sup += ca_cols_sup
+
+        if len(vol_cols) > 0:
+        #elif len(vol_cols) > 0:
+            if df[time_col].nunique() > 1:
+                # Si c'est une colonne de mois numériques, la convertir en noms
+                if time_col == "month" :
+                    df_t = df.groupby(["year", "month"])[vol_cols].sum().reset_index()
+                    # Création d'une date fictive pour le tri
+                    df_t["date"] = pd.to_datetime(dict(year=df_t["year"], month=df_t["month"], day=1))
+                    
+                    # Création de l'étiquette
+                    df_t["MONTH"] = df_t.apply(lambda row: f"{mois_dict[row['month']]}-{row['year']}", axis=1)
+                    
+                    # Tri chronologique
+                    df_t = df_t.sort_values("date")
+
+                    #transformer le DataFrame pour plotly
+                    df_melted = df_t.melt(
+                        id_vars="MONTH",
+                        value_vars= vol_cols,
+                        var_name="Volume",
+                        value_name="Valeur"
+                    )
+                    #tracer les courbe
+                    fig = px.line(
+                        df_melted,
+                        x="MONTH",
+                        y="Valeur",
+                        color="Volume",
+                        markers=True,
+                        color_discrete_sequence= PALETTE,
+                        title="Évolution mensuelle du volume"
+                    )
+
+                    fig.update_layout(
+                        xaxis_title="Mois",
+                        yaxis_title="Volume",
+                        legend_title="Volume",
+                        title_x=0.3,
+                        hovermode="x unified"
+                    )
+                    charts.append(("Courbe", f"volume_vs_{time_col}", fig)) 
+                if time_col == "day" :
+                    df_t = df.groupby(["year","day"])[vol_cols].sum().reset_index()
+                    df_t["day"] = pd.to_datetime(df_t["day"], yearfirst=True, format="%Y%m%d")
+                    df_t = df_t.sort_values(by="day", ascending=False)
+       #Ajouter une colonne "jour" qui contient le jour du mois
+                    df_t["Jours"] = df_t["day"].dt.day
+                    #transformer le DataFrame pour plotly
+                    df_melted = df_t.melt(
+                        id_vars="day",
+                        value_vars= vol_cols,
+                        var_name="Volume",
+                        value_name="Valeur"
+                    )
+                    #tracer les courbe
+                    fig = px.line(
+                        df_melted,
+                        x="day",
+                        y="Valeur",
+                        color="Volume",
+                        markers=True,
+                        color_discrete_sequence= PALETTE,
+                        title="Évolution quotidienne du Volume"
+                    )
+
+                    fig.update_layout(
+                        xaxis_title="Jours",
+                        yaxis_title="Volume",
+                        legend_title="Volume",
+                        title_x=0.3,
+                        hovermode="x unified"
+                    )
+                    charts.append(("Courbe", f"vol_day_vs_{time_col}", fig))
+
+            vol_cols_sup = [x for x in numeric_cols if x not in vol_cols and x not in ca_cols and x not in parc_cols]
+            #st.write(f"vol : {vol_cols_sup}")
+            cols_sup += vol_cols_sup
+
+        if len(parc_cols) > 0 :
+            if df[time_col].nunique() > 1:
+                # Si c'est une colonne de mois numériques, la convertir en noms
+                if time_col == "month" :
+                    df_t = df.groupby(["year", "month"])[parc_cols].sum().reset_index()
+                    # Création d'une date fictive pour le tri
+                    df_t["date"] = pd.to_datetime(dict(year=df_t["year"], month=df_t["month"], day=1))
+                    
+                    # Création de l'étiquette
+                    df_t["MONTH"] = df_t.apply(lambda row: f"{mois_dict[row['month']]}-{row['year']}", axis=1)
+                    
+                    # Tri chronologique
+                    df_t = df_t.sort_values("date")
+
+                    #transformer le DataFrame pour plotly
+                    df_melted = df_t.melt(
+                        id_vars="MONTH",
+                        value_vars= parc_cols,
+                        var_name="Parc",
+                        value_name="Valeur"
+                    )
+                    #tracer les courbe
+                    fig = px.line(
+                        df_melted,
+                        x="MONTH",
+                        y="Valeur",
+                        color="Parc",
+                        markers=True,
+                        color_discrete_sequence= PALETTE,
+                        title="Évolution mensuelle du parc"
+                    )
+
+                    fig.update_layout(
+                        xaxis_title="Mois",
+                        yaxis_title="Parc",
+                        legend_title="Parc",
+                        title_x=0.3,
+                        hovermode="x unified"
+                    )
+                    charts.append(("Courbe", f"parc_vs_{time_col}", fig))
+                    ############################################ DAY
+                if time_col == "day" :
+                    df_t = df.groupby(["year","day"])[parc_cols].sum().reset_index()
+                    df_t["day"] = pd.to_datetime(df_t["day"], yearfirst=True, format="%Y%m%d")
+                    df_t = df_t.sort_values(by="day", ascending=False)
+       #Ajouter une colonne "jour" qui contient le jour du mois
+                    df_t["Jours"] = df_t["day"].dt.day
+                    #transformer le DataFrame pour plotly
+                    df_melted = df_t.melt(
+                        id_vars="day",
+                        value_vars= parc_cols,
+                        var_name="Parc",
+                        value_name="Valeur"
+                    )
+                    #tracer les courbe
+                    fig = px.line(
+                        df_melted,
+                        x="day",
+                        y="Valeur",
+                        color="Parc",
+                        markers=True,
+                        color_discrete_sequence= PALETTE,
+                        title="Évolution quotidienne du parc"
+                    )
+
+                    fig.update_layout(
+                        xaxis_title="Jours",
+                        yaxis_title="Parc",
+                        legend_title="Parc",
+                        title_x=0.3,
+                        hovermode="x unified"
+                    )
+                    charts.append(("Courbe", f"parc_day_vs_{time_col}", fig))
+
+            parc_cols_sup = [x for x in numeric_cols if x not in parc_cols and x not in ca_cols and x not in vol_cols]
+            #st.write(f"parc : {parc_cols_sup}")
+            cols_sup += parc_cols_sup 
+            #st.write(f"col : {set(cols_sup)}")
+
+        if ca_cols == [] and vol_cols == [] and parc_cols == [] :
+            num_cols = numeric_cols
+        else : 
+            #cols_num = numeric_cols
+            #st.write(cols_num)
+            #for i in cols_sup :
+            #    st.write(i)
+            #    cols_num.remove(i)
+            #num_cols = [x for x in numeric_cols if x in cols_sup]
+            cols_sup = list(set(cols_sup))
+            num_cols = cols_sup
+            #st.write(num_cols)
+
+        #else :
+        #    continue
+            #num_cols = [x for x in numeric_cols if x not in cols_sup]
+            #num_cols = numeric_cols
+
+
+
+        ###########################################################################
+        #           Courbe indivuduelle
+        ###########################################################################
+        #num_cols = [x for x in numeric_cols if x in cols_sup]
+        #num_cols = [x for x in numeric_cols if x not in cols_sup]
+        #st.write(f"Var : {num_cols}, {cols_sup}")
+        #for num in numeric_cols:
+        for num in num_cols:
             if num == "year" or num == "month" or num == "day":
                 continue
             elif df[time_col].nunique() > 1:
@@ -456,7 +599,7 @@ def display_charts(df: pd.DataFrame) :
                     # Création d'une date fictive pour le tri
                     df_t["date"] = pd.to_datetime(dict(year=df_t["year"], month=df_t["month"], day=1))
                     
-                    # Création de l'étiquette ex: "Déc-2024"
+                    # Création de l'étiquette
                     df_t["MONTH"] = df_t.apply(lambda row: f"{mois_dict[row['month']]}-{row['year']}", axis=1)
                     
                     # Tri chronologique
@@ -466,7 +609,8 @@ def display_charts(df: pd.DataFrame) :
                         continue
                     else :
                         # Tracer la courbe
-                        fig = px.line(df_t, x="MONTH", y=num, markers=True, title=f"Évolution de {num} <br>suivant les {time_col}")
+                        fig = px.line(df_t, x="MONTH", y=num, markers=True, color_discrete_sequence= PALETTE,
+                                      title=f"Évolution de {num} <br>suivant les {time_col}")
                         fig.update_xaxes(tickangle=30)
                         
                         #img = Image.open(f"{folder}/{i}.png")
@@ -482,9 +626,10 @@ def display_charts(df: pd.DataFrame) :
                         continue
                     else :
                         #fig = st.plotly_chart(px.line(df_t, x=time_col, y=num, title=f"Évolution de {num} suivant les {time_col}"))
-                        fig = px.line(df_t, x="YEARS", y=num, markers=True, title=f"Évolution de {num} <br>suivant les {time_col}")
+                        fig = px.line(df_t, x="YEARS", y=num, markers=True, color_discrete_sequence= PALETTE,
+                                      title=f"Évolution de {num} <br>suivant les {time_col}")
                         
-                        charts.append(("Courbe", f"{num} vs {time_col}", fig))
+                        charts.append(("Courbe", f"{num}__vs__{time_col}", fig))
 
                 elif time_col == "day" :
                     df_t = df.groupby(time_col)[num].sum().reset_index()
@@ -493,16 +638,17 @@ def display_charts(df: pd.DataFrame) :
                     df_t = df_t.sort_values(by="day", ascending=False)
        #Ajouter une colonne "jour" qui contient le jour du mois
                     df_t["jour"] = df_t["day"].dt.day
-                    fig = px.line(df_t, x="day", y=num, markers=True, title=f"Évolution de {num} <br>suivant les {time_col}")
+                    fig = px.line(df_t, x="day", y=num, markers=True, color_discrete_sequence= PALETTE, 
+                                  title=f"Évolution de {num} <br>suivant les {time_col}")
                         
-                    charts.append(("Courbe", f"{num}_vs_{time_col}", fig))
+                    charts.append(("courbE", f"{num}_vs_{time_col}", fig))
 
                 else :
                     continue
    
     #st.subheader("Graphiques Catégorielles vs Numériques")
     for cat in categorical_cols:
-        #print(df[cat].dtype)
+        #print(cat, df[cat].dtype)
         if cat == "msisdn" or cat == "MSISDN" :
             continue
 
@@ -512,25 +658,97 @@ def display_charts(df: pd.DataFrame) :
             else :
                 if df[cat].nunique() <= 1:
                     continue
-                #print(df[cat].nunique())
+                #print(cat, df[cat].dtype)
+                #else : 
                 if df[cat].nunique() <= 7:
-                    fig = px.pie(df, names=cat, values=num, title=f"Répartition des {cat} <br>par rapport au {num}")
-                    
-                    charts.append(("Pie chart", f"{num} vs {cat}", fig))
-                else :
-                    
-                    df_sorted = df.groupby(cat)[num].sum().sort_values(ascending=False)
-                    df_5P = df_sorted.head(10).reset_index()
-                    df_5D = df_sorted.tail(5).reset_index()
+                    if "month" in df.columns and df["month"].nunique() > 1 :
+                        #print(df.columns)
+                        #df_t = df
+                        df_t = df.groupby(["year", "month", cat])[num].sum().reset_index()
+                        # Création d'une date fictive pour le tri
+                        df_t["date"] = pd.to_datetime(dict(year=df_t["year"], month=df_t["month"], day=1))
+                        
+                        # Création de l'étiquette
+                        df_t["MONTH"] = df_t.apply(lambda row: f"{mois_dict[row['month']]}-{row['year']}", axis=1)
+                        # Tri chronologique
+                        #df_t = df_t.sort_values("date")
+                        #df_t = df_t.sort_values(["date", num], ascending=[True, False])
 
-                    fig0 = px.bar(df_5P, x=cat, y=num, title=f"Top 10 des {cat} par<br> rapport au {num}")
-                    fig1 = px.bar(df_5D, x=cat, y=num, title=f"Last 5 des {cat} par<br> rapport au {num}")
+                        if df_t[num].sum() == 0 :
+                            continue
+                        else :
+                            df_t = df_t.sort_values("date")
+                            fig = px.line(df_t, x="MONTH", y=num, markers=True, color= cat, color_discrete_sequence= PALETTE, 
+                                          title=f"Évolution du {num} par rapport <br>au {cat} suivant les Month")
+                            charts.append(("line", f"{num} vs {cat}", fig))
+                    else :
+                        if df[num].sum() == 0 :
+                            continue
+                        else :
+                            fig = px.pie(df, names=cat, values=num, color_discrete_sequence= PALETTE, #color_discrete_map = PALETTE,
+                                     title=f"Répartition des {cat} <br>par rapport au {num}")
+
+                    #fig = px.pie(df, names=cat, values=num, title=f"Répartition des {cat} <br>par rapport au {num}")
+                            charts.append(("Pie chart_or_line", f"{num} vs {cat}", fig))
+
+                else :
+                    if "month" in df.columns and df["month"].nunique() > 0 :
+                        #print(df.columns)
+                        #df_t = df
+                        df_t = df.groupby(["year", "month", cat])[num].sum().reset_index()
+                        # Création d'une date fictive pour le tri
+                        df_t["date"] = pd.to_datetime(dict(year=df_t["year"], month=df_t["month"], day=1))
+                        
+                        # Création de l'étiquette
+                        df_t["MONTH"] = df_t.apply(lambda row: f"{mois_dict[row['month']]}-{row['year']}", axis=1)
+
+
+                        #df_t = df_t[df_t[num].notna() & (df_t[num] > 0)]
+                        #print(df_t.columns)
+                        #df_t = df_t.sort_values(["date", num], ascending=[True, False]).groupby(["MONTH"]).head(3)
+                        df_t = df_t.sort_values(["date", num], ascending=[True, False]).groupby(["year", "month","MONTH"]).head(3).reset_index()
+                        #df_t = df_t.sort_values("date")
+                        
+                        # Étape 2 : Créer le graphique à barres groupées
+                        if df_t[num].sum() == 0 :
+                            continue
+                        else :
+                            fig = px.bar(
+                                df_t,
+                                x="MONTH",
+                                y= num ,
+                                color= cat,
+                                color_discrete_sequence= PALETTE,
+                                #color_discrete_map = PALETTE,
+                                barmode="group",
+                                text= cat,
+                                title=f"Top 3 des {cat} les plus influentes par <br>rapport au {num} par mois"
+                            )
+                            fig.update_layout(
+                                xaxis_title="MONTH",
+                                yaxis_title=num,
+                                legend_title=cat,
+                                title_x=0.3,
+                            #    bargap=0,          # enlève l’espace entre groupes
+                            #    bargroupgap=0      # enlève l’espace entre barres d’un même groupe
+                            )
+                            charts.append(("Bar chart_group", f"{num} vs {cat}", fig))
+
+
+                #else :
+                #    df_sorted = df.groupby(cat)[num].sum().sort_values(ascending=False)
+                #    df_5P = df_sorted.head(10).reset_index()
+                #    df_5D = df_sorted.tail(5).reset_index()
+
+                #    fig0 = px.bar(df_5P, x=cat, y=num, title=f"Top 10 des {cat} par<br> rapport au {num}")
+                #    fig1 = px.bar(df_5D, x=cat, y=num, title=f"Last 5 des {cat} par<br> rapport au {num}")
                     
                     #st.plotly_chart(px.pie(df, names=cat, values=num, title=f"Répartition de {num} par {cat}"))
-                    charts.append(("Bar chart", f"{num} vs {cat}", fig0))
-                    charts.append(("Bar chart 1", f"{num} vs {cat}", fig1))
+                #    charts.append(("Bar chart", f"{num} vs {cat}", fig0))
+                #    charts.append(("Bar chart 1", f"{num} vs {cat}", fig1))
     
     return charts
+    #return charts, cols_sup
 
 # Trier les fichiers par date extraite du nom
 def extract_datetime(filename):
@@ -694,9 +912,9 @@ if st.session_state.user_trouve is None:
     with tab2:
         new_user = st.text_input("Choisir un nom d'utilisateur")
         new_pass = st.text_input("Choisir un mot de passe", type="password")
-        if st.button("Créer mon compte"):
+        if st.button("Créer mon compte") :
             user_path = os.path.join("chatlogs", new_user)
-            if os.path.exists(user_path):
+            if os.path.exists(user_path) :
                 st.warning("Ce nom d'utilisateur existe déjà.")
             else:
                 create_user(new_user, new_pass)
@@ -977,11 +1195,12 @@ else :
                         st.dataframe(m["content_data"])
 
                         char = display_charts(df)
+                        #st.write(x)
                         if char != [] :
                         #for idx, (gtype, label, fig) in enumerate(st.session_state.charts):
                             st.subheader("Le Dashboard des résulats de la requete")
 
-                        cols = st.columns(3, gap="large")
+                        cols = st.columns(2, gap="large")
                         id = 0
                         
                         for idx, (gtype, label, fig) in enumerate(char):
@@ -989,7 +1208,7 @@ else :
                             unique_id = uuid.uuid4().hex[:8]  
                             key = f"{label}_{unique_id}"
                             #key = f"{label}_{id}"
-                            with cols[idx % 3]:
+                            with cols[idx % 2]:
                                 st.plotly_chart(fig, use_container_width=True, height=250, key= key)
                             
                             id = id + 1
@@ -1008,22 +1227,23 @@ else :
                             df.drop("Unnamed: 0", axis=1, inplace=True)
 
                         #print(df.info())
-                        #st.dataframe(m["kpi_result"])
+                        #st.dataframe(df)
 
                         char = display_charts(df)
                         if char != [] :
                         #for idx, (gtype, label, fig) in enumerate(st.session_state.charts):
-                            st.subheader("Le Dashboard des KPI pour l'explication des résultats de la requete")
+                            st.subheader("Les données et le Dashboard des KPI pour l'explication des résultats de la requete")
                         
-                        cols = st.columns(3, gap="large")
+                        st.dataframe(df)
+                        
+                        cols = st.columns(2, gap="large")
                         #id = 0
-
-                        for idx, (gtype, label, fig) in enumerate(char):
+                        for idx, (gtype, label, fig) in enumerate(char) :
                             #identifiant aléatoire 
                             unique_id = uuid.uuid4().hex[:8]  
                             key = f"{label}_{unique_id}"
                             #key = f"{label}_{id}"
-                            with cols[idx % 3]:
+                            with cols[idx % 2]:
                                 st.plotly_chart(fig, use_container_width=True, height=250, key= key)
 
 
@@ -1037,7 +1257,6 @@ else :
         #send = False
         if user_msg:
             st.session_state.user_msg = user_msg
-            st.session_state.last_result = None
 
             # Affiche et stocke le message utilisateur
             st.chat_message("user").markdown(user_msg)
@@ -1061,7 +1280,7 @@ else :
                 st.write(" Veuillez patientez, votre requete est en cours d'exécution ... ")
                 start_time = time.time()
 
-                #st.session_state.sql_request, request_cost = Agent_SQL(user_msg, path)
+                #st.session_state.sql_request, request_cost = Agent_SQL_Gem(user_msg, path)
                 st.session_state.sql_request = Agent_SQL_Gem(user_msg, path)
                 #st.session_state.sql_request = SQL_Agent(user_msg, path)
 
@@ -1073,7 +1292,7 @@ else :
 
                 ### Gestion des caractéristiques de la requete
 
-                #nouvelle_ligne = [1, user_msg, request_cost, execution_time, dt.now().strftime("%Y-%m-%d %H:%M:%S")]
+                #nouvelle_ligne = [1, user_msg, request_cost, execution_time, dt.now().strftime("%Y-%m-%d %H:%M"), st.session_state.sql_request]
                 nouvelle_ligne = [1, user_msg, 0, execution_time, dt.now().strftime("%Y-%m-%d %H:%M"), st.session_state.sql_request]
                 with open("Admin.csv", mode="a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f, delimiter= ";")
@@ -1085,14 +1304,12 @@ else :
 
             except Exception as e :
                 st.error(f"Le modèle ne répond pas pour le moment, veuillez réessayez plus tard : \n\n {e}.")
-                st.session_state.sql_request = None
+                st.session_state.sql_request = " "
                 request_cost = 0
             
             
             #st.session_state.sql_request = sql_request
-
-            
-            
+    
         if st.session_state.user_msg is not None:
             # Fonction pour la vérification du requete
             def is_not_sql_query(text: str) -> bool:
@@ -1143,8 +1360,8 @@ else :
                 #st.session_state.analyse = True
 
                 try :
-                    result_request = connect_db_railway(request=sql_request)
-                    #result_request = connect_db(request=st.session_state.sql_request)
+                    #result_request = connect_db_railway(request=st.session_state.sql_request)
+                    result_request = connect_db(request=st.session_state.sql_request)
                     #result_request =pd.read_csv("Résultat_requete.csv", sep= ";")
                     path_result= f"chatlogs/{user}/Resultat_requete.csv"
                     #data = result_request.to_csv("Resultat_requete.csv", sep=";")
@@ -1192,7 +1409,7 @@ else :
                 #for idx, (gtype, label, fig) in enumerate(st.session_state.charts):
                     st.subheader("Le Dashboard des résulats de la requete")
 
-                cols = st.columns(3, gap="large")
+                cols = st.columns(2, gap="large")
                 id = 0
                 
                 for idx, (gtype, label, fig) in enumerate(char):
@@ -1200,7 +1417,7 @@ else :
                     unique_id = uuid.uuid4().hex[:8]  
                     key = f"{label}_{unique_id}"
                     #key = f"{label}_{id}"
-                    with cols[idx % 3]:
+                    with cols[idx % 2]:
                         st.plotly_chart(fig, use_container_width=True, height=250, key= key)
 
                 st.session_state.exec_clicked = False
@@ -1209,7 +1426,10 @@ else :
             #df = st.session_state.last_result
             if "last_result" in st.session_state and st.session_state.last_result is not None :
                 df = st.session_state.last_result
-                if ("year" in df.columns and df["year"].nunique() > 1) or ("month" in df.columns and df["month"].nunique() > 1) or ("day" in df.columns and df["day"].nunique() > 1):
+                #list_img = display_charts(st.session_state.last_result)
+                list_img = display_charts(df)
+                nb_img = len(list_img)
+                if ("year" in df.columns and df["year"].nunique() > 1) or ("month" in df.columns and df["month"].nunique() > 1) or ("day" in df.columns and df["day"].nunique() > 1) or (nb_img != 0) :
             # if "last_result" in st.session_state and (df["year"].nunique() > 1 or df["month"].nunique() > 1):
                 #df = st.session_state.last_result
                 #if df["year"].nunique() > 1 or df["month"].nunique() > 1 :
@@ -1217,19 +1437,39 @@ else :
                 #st.subheader("Actions supplémentaires")
                     if st.button(" Analyzer ", use_container_width=True):
                         try:
-                            nb_img, char = Auto_charts(st.session_state.last_result)
+                            #pio.defaults.image_exporter = "kaleido"
+                            #x = pio.kaleido.kaleido_available()
+                            #st.write(f"kal : {x}")
+                            #pio.defaults.image_format = "png"             # format d'export
+                            #pio.defaults.image_scale = 2  
+
+                            dossier_dash = f"chatlogs/{user}/{user}_dash"
+                            os.makedirs(dossier_dash, exist_ok=True)
+                            #st.session_state.last_result = pd.read_csv("C:/Users/stg_gassama92247/Desktop/Sonatel/Sonatel/App/Resultat_requete.csv", sep= ";")
+                            #list_img = display_charts(st.session_state.last_result)
+                            #nb_img = len(list_img)
+
+                            #nb_img, char = Auto_charts(st.session_state.last_result)
+                            for idx, (gtype, label, fig) in enumerate(list_img) : 
+                                # CONFIGURATION PNG HAUTE QUALITÉ
+                                pio.defaults.image_engine = "kaleido"
+                                pio.defaults.image_format = "png"
+                                pio.defaults.image_scale = 2
+                                
+                                #pio.to_image(fig, format="png", engine = "kaleido")
+                                fig.write_image(f"{dossier_dash}/{idx}.png")
+                                #pio.write_image(fig= fig, file= f"{dossier_dash}/{idx}.png", format="png", engine="kaleido", scale=2)
                             
                             echant = st.session_state.last_result.head()
                             echant = echant.to_dict(orient='records')
                             path = f"{user_dir}/{user}"
 
                             start_time = time.time()
-
+                            
                             sql_query, info_kpi =Agent_KPI_req_gemini(echant, user_msg,st.session_state.sql_request, path)
                             #sql_query, info_kpi, reqest_cost =Agent_KPI_req(echant, user_msg,st.session_state.sql_request, path)
 
-                            #result_kpi = connect_db(request=sql_query)
-                            result_kpi = connect_db_railway(request=sql_query)
+                            result_kpi = connect_db(request=sql_query)
                             #result_request =pd.read_csv("Résultat_requete.csv", sep= ";")
                             path_result= f"chatlogs/{user}/Resultat_kpi.csv"
                             #data = result_request.to_csv("Resultat_requete.csv", sep=";")
@@ -1239,25 +1479,37 @@ else :
                             if "Unnamed: 0" in kpi.columns:
                                 kpi.drop("Unnamed: 0", axis=1, inplace=True)
 
-                            img_nb, graphe = Auto_charts(kpi, 'img_kpi')
-                            if (img_nb < 1 or graphe == []) :
+                            #img_nb, graphe = Auto_charts(kpi, 'img_kpi')
+                            dossier_dash_kpi = f"chatlogs/{user}/{user}_dash_kpi"
+                            os.makedirs(dossier_dash_kpi, exist_ok=True)
+                            list_img_kpi = display_charts(kpi)
+                            img_nb = len(list_img_kpi)
+                            for idx, (gtype, label, fig) in enumerate(list_img_kpi) : 
+                                fig.write_image(f"{dossier_dash_kpi}/{idx}.png")
+
+                            if (img_nb < 1 or list_img_kpi == []) :
                                 st.error("L'analyse complet n'a pas été faite, essayez de le relancé ")
                             else :
-                                recomandation = analyse_recommand_gemini(request=user_msg,nb_imgD=nb_img, nb_imgKPI=img_nb, info_kpi=info_kpi)
+                                recomandation = analyse_recommand_gemini(img_dash=dossier_dash, img_dash_kpi=dossier_dash_kpi, request=user_msg,nb_imgD=nb_img, nb_imgKPI=img_nb, info_kpi=info_kpi)
                                 st.session_state.full_chat_history[-1].update({"kpi_result" : kpi.to_dict()})
+
+                                #########################""
+                                st.dataframe(kpi)
+
+                                ############################
                                 char = display_charts(kpi)
                                 
                                 if char != [] :
                                 #for idx, (gtype, label, fig) in enumerate(st.session_state.charts):
                                     st.subheader("Le Dashboard des KPI pour l'explication des résultats de la requete")
                                     #id = 0
-                                cols = st.columns(3, gap="large")
+                                cols = st.columns(2, gap="large")
                                 for idx, (gtype, label, fig) in enumerate(char):
                                     #identifiant aléatoire 
                                     unique_id = uuid.uuid4().hex[:8]  
                                     key = f"{label}_{unique_id}"
                                     #key = f"{label}_{id}"
-                                    with cols[idx % 3]:
+                                    with cols[idx % 2]:
                                         st.plotly_chart(fig, use_container_width=True, height=250, key= key)
 
                                 #recomandation = analyse_recommand(request=user_msg, nb_img=nb_img)
@@ -1266,6 +1518,7 @@ else :
                                 
                                 #st.session_state.full_chat_history[-1]["recommandation"] = recomandation
                                 st.session_state.full_chat_history[-1].update({"recommandation" : recomandation})
+                            
 
                             end_time = time.time()
                             execution_time = end_time - start_time
