@@ -55,7 +55,7 @@ mixtral_key = "bnccjKG64aj9lgVqC1KzNe1tqnK1eZfm"
 ################################# 
 #       Google API KEY
 new_api = "AIzaSyDBwRxvMEThZXphJuvG9ZBDzQsQIjskoFU"
-api_k = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
+api_k = "AIzaSyCylEaH8adPevEYM56N0W3JRR8ebVmeyak"
 
 """
 gpt = LLM(
@@ -1542,7 +1542,7 @@ def Agent_RAG_KPI(echantillon, requete, user) :
     #RAG
     retriever = db.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
-        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0, google_api_key = new_api),
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0, google_api_key = "AIzaSyCDo5oA60sueAE5SEXbo8wrJs7aQ3ESnxk"),
         #gpt-4o-mini
         #llm=ChatOpenAI(model_name="gpt-4o-mini", temperature=0),
         retriever=retriever,
@@ -1866,7 +1866,7 @@ def Agent_KPI_req(echantillon, requete, requete_sql, user_dir) :
 
 def Agent_KPI_req_gemini(echantillon, requete, requete_sql, user_dir):
     # Configuration Gemini
-    genai.configure(api_key = "AIzaSyAE7FiZkMS-vJmEOun1vkeNNIiSMYdmqUA")
+    genai.configure(api_key = "AIzaSyCDo5oA60sueAE5SEXbo8wrJs7aQ3ESnxk")
 
     info_kpi = Agent_RAG_KPI(echantillon, requete, user_dir)
     print(info_kpi)
@@ -1985,7 +1985,7 @@ def Agent_KPI_req_gemini(echantillon, requete, requete_sql, user_dir):
 
 ###################################################################################
 #               Analyse et recommande   
-apii = "AIzaSyD-yA0SYZtsxsaMNRbkBusxY_BR-6kKi38"
+apii = "AIzaSyAJiC6dT3OkU03eli6j8jtGisG83L1FBEU"
 def analyse_recommand_gemini(api_key = apii, img_dash = None, img_dash_kpi = None, request=None, nb_imgD=1,nb_imgKPI=1, info_kpi=None):
     # Configuration Gemini
     genai.configure(api_key = api_key)
@@ -2862,6 +2862,7 @@ def SQL_Agent(requete, user_dir):
 
     return sql_query
     """
+
 
 
 
