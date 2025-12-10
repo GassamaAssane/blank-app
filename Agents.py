@@ -25,7 +25,7 @@ import json
 import pandas as pd
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_mistralai import ChatMistralAI
-from langchain_groq import ChatGroq
+#from langchain_groq import ChatGroq
 #from langchain.callbacks import get_openai_callback
 from langchain_community.callbacks.manager import get_openai_callback
 #from langchain_community.callbacks import get_openai_callback
@@ -2862,6 +2862,7 @@ def SQL_Agent(requete, user_dir):
 
     return sql_query
     """
+
 
 
 
