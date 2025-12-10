@@ -2319,7 +2319,8 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
     
     ###############################################       
     ####      Google
-    key = "AIzaSyCDo5oA60sueAE5SEXbo8wrJs7aQ3ESnxk"
+    #key = "AIzaSyCDo5oA60sueAE5SEXbo8wrJs7aQ3ESnxk"
+    key = "AIzaSyCylEaH8adPevEYM56N0W3JRR8ebVmeyak"
 
     ##############################################
     #        Mistral
@@ -2862,6 +2863,7 @@ def SQL_Agent(requete, user_dir):
 
     return sql_query
     """
+
 
 
 
