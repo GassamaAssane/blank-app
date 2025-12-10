@@ -22,8 +22,9 @@ from PIL import Image
 import math
 import time
 import uuid
-from Agents import Agent_analyse_recommand, Agent_SQL, Agent_SQL_Gem, SQL_Agent, Agent_KPI_req_gemini, \
+from Agents import Agent_analyse_recommand, Agent_SQL, Agent_SQL_Gem, Agent_KPI_req_gemini, \
                                 analyse_recommand_gemini, Agent_KPI_req
+# SQL_Agent,
 from connection_DB import connect_db, connect_db_railway
 
 
@@ -1543,3 +1544,4 @@ else :
         save_history(st.session_state.full_chat_history, get_chat_path(user, st.session_state.current_chat))
 
     st.markdown('<div>', unsafe_allow_html=True)
+
