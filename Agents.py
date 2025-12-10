@@ -2069,7 +2069,7 @@ def analyse_recommand_gemini(api_key = apii, img_dash = None, img_dash_kpi = Non
 def Agent_analyst_RAG_Gemini(requete):
     ####################################
     #        Google
-    api = "AIzaSyDHkznzWQS7g0t-jfaJ4RHKflgPKbGNLBw"
+    api = "AIzaSyCylEaH8adPevEYM56N0W3JRR8ebVmeyak"
 
     ###################################
     #        Mixtral
@@ -2862,4 +2862,5 @@ def SQL_Agent(requete, user_dir):
 
     return sql_query
     """
+
 
