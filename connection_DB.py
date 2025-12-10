@@ -126,7 +126,7 @@ def connect_cloudera(host, database= None , request = None) :
 #            Connexion avec Railway Database
 ####################################################################################
 
-def connect_db_railway(host = "trolley.proxy.rlwy.net", user = "root", password = "IKTmKjTUIFYrTGRUWaKWnqNyUaDVjscf", database = "railway", port = 22871, request = None) :
+def connect_db_railway(host = "trolley.proxy.rlwy.net", user = "root", password = "IKTmKjTUIFYrTGRUWaKWnqNyUaDVjscf", database = "railway", port = 52363, request = None) :
 
     df = pd.DataFrame()
     try:
