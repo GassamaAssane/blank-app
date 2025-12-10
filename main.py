@@ -1361,8 +1361,8 @@ else :
                 #st.session_state.analyse = True
 
                 try :
-                    #result_request = connect_db_railway(request=st.session_state.sql_request)
-                    result_request = connect_db(request=st.session_state.sql_request)
+                    result_request = connect_db_railway(request=st.session_state.sql_request)
+                    #result_request = connect_db(request=st.session_state.sql_request)
                     #result_request =pd.read_csv("Résultat_requete.csv", sep= ";")
                     path_result= f"chatlogs/{user}/Resultat_requete.csv"
                     #data = result_request.to_csv("Resultat_requete.csv", sep=";")
@@ -1470,7 +1470,8 @@ else :
                             sql_query, info_kpi =Agent_KPI_req_gemini(echant, user_msg,st.session_state.sql_request, path)
                             #sql_query, info_kpi, reqest_cost =Agent_KPI_req(echant, user_msg,st.session_state.sql_request, path)
 
-                            result_kpi = connect_db(request=sql_query)
+                            #result_kpi = connect_db(request=sql_query)
+                            result_kpi = connect_db_railway(request=sql_query)
                             #result_request =pd.read_csv("Résultat_requete.csv", sep= ";")
                             path_result= f"chatlogs/{user}/Resultat_kpi.csv"
                             #data = result_request.to_csv("Resultat_requete.csv", sep=";")
@@ -1544,4 +1545,5 @@ else :
         save_history(st.session_state.full_chat_history, get_chat_path(user, st.session_state.current_chat))
 
     st.markdown('<div>', unsafe_allow_html=True)
+
 
