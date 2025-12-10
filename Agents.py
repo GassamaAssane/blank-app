@@ -2319,7 +2319,7 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
     
     ###############################################       
     ####      Google
-    key = "AIzaSyBFlCFG--ZYmvb9nqy7Gg9fuPmo8gaWgPY"
+    key = "AIzaSyCDo5oA60sueAE5SEXbo8wrJs7aQ3ESnxk"
 
     ##############################################
     #        Mistral
@@ -2444,7 +2444,7 @@ def Agent_SQL_Gem (requete, user_dir):
 
     ######################################## 
     #       Google
-    key = "AIzaSyAE2xoS85v6DWEZLl4C3XrvAkVk1Uoee-k"
+    key = "AIzaSyAJiC6dT3OkU03eli6j8jtGisG83L1FBEU"
     #key = "AIzaSyDRMK4upPL-nEIXd8Nurjgcy3IZyTYoGK0"
     os.environ["GOOGLE_API_KEY"] = key
     #genai.configure(api_key = os.environ["GOOGLE_API_KEY"])
@@ -2862,5 +2862,6 @@ def SQL_Agent(requete, user_dir):
 
     return sql_query
     """
+
 
 
