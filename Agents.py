@@ -2333,7 +2333,7 @@ def Agent_info_supp_Gem(result_table, requete, user_dir) :
     # RAG
     retriever = db.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
-        llm=ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0, google_api_key = key) ,
+        llm=ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0, google_api_key = key) ,
         #llm=ChatOpenAI(model_name="gpt-5-mini", temperature=0, api_key= openai_key),  #    "gpt-5-mini"     "gpt-4o-mini"
         #llm=ChatOpenAI(model_name="gpt-4o", api_key= openai_key),
         #llm = ChatMistralAI(model_name = "open-mixtral-8x22b", api_key= key, temperature= 0),
@@ -2862,6 +2862,7 @@ def SQL_Agent(requete, user_dir):
 
     return sql_query
     """
+
 
 
 
