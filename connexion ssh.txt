@@ -60,3 +60,73 @@ connection = mysql.connector.connect(
     password="MotDePasseFort123",
     database="nom_de_ta_base"
 )
+
+
+
+# REQUIREMENTS
+pip freeze > requirements.txt
+
+# Installation
+pip install -r requirements.txt
+
+
+# Dépôt Guithub
+# Configuration d'identité
+git config --global user.name "Assane Gassama"
+git config --global user.email "tonemail@exemple.com"
+
+# Initialisation git
+git init
+
+# Ajouter les fichiers
+git add .
+
+# Enregistrer les modifications
+git commit -m "Premier commit"
+
+# pousser le dossier vers le github
+git remote add origin https://github.com/ton-compte/App.git
+git branch -M main
+git push -u origin main
+# forcer l'envoie
+git push -u origin main --force
+
+#
+# Supprime le cache Git (pour tout réindexer)
+git rm --cached -r .
+
+
+# Installation puis modification des variables d'environnement du système (Path)
+winget install Oracle.MySQL
+
+variable du système Path : C:\Program Files\MySQL\MySQL Server 8.4\bin
+
+
+# 	Connection vers la base railway
+#	allez sur railway et récupérez vos identifiants
+mysql -h turntable.proxy.rlwy.net -u root -p uhaeZgWgEoiampldQuUWULtzJpNoPNBr --port 22871 --protocol=TCP railway
+mysql -h turntable.proxy.rlwy.net -u root -p uhaeZgWgEoiampldQuUWULtzJpNoPNBr --port 22871 --protocol=TCP
+
+show databases;
+# 	connecter à la base 
+connect railway;
+
+
+# Importation d'une base ou table
+SOURCE C:/chemin/vers/db.sql;
+
+
+
+###############################################################
+#	Déploiement local avec ta base
+###############################################################
+
+ipconfig : Pour afficher les infos du système (IP, DNS, etc)
+
+Si tu veux que ton app interagisse avec une base MySQL locale :
+
+Assure-toi que MySQL tourne (service mysql start)
+
+Configure la connexion dans ton code avec host="127.0.0.1" et le bon port
+
+Si tu veux y accéder depuis un autre appareil du réseau, remplace host="127.0.0.1" par ton IP locale (ex. 192.168.1.23)
